@@ -1,0 +1,173 @@
+--[[ 
+Script of default NPC, citizen of the player's town
+
+NPC can work (gather resources), eat, drink, age,
+get infected and die.
+	
+In this version, NPC can do any work, the only difference
+between them is producivity stat, that affect how fast they
+do their work.
+--]]
+
+require "main.NPC.NPC_anim"
+
+-------------------------------------------------
+-- Stats
+-------------------------------------------------
+
+go.property("health", 100)
+go.property("hunger", 0)
+go.property("thirst", 0)
+go.property("age", 0)
+go.property("productivity", 100)
+go.property("infection", 1)
+
+-------------------------------------------------
+-- Logic
+-------------------------------------------------
+
+-- Rates of stats change over time
+local hunger_rate = 2
+local thirst_rate = 1.2
+local age_rate = 1
+local infection_rate = 1.2
+
+-- State of the npc
+States = {
+	["IDLE"] = 1,
+	["MOVING"] = 2,
+	["GATHERING"] = 3,
+}
+go.property("state", States["IDLE"])
+
+-- Functions:
+
+function die(self)
+	print("NPC died")
+end
+
+-- Update infection if NPC is infected.
+function update_infection(self, dt)
+	if (self.infection > 0) then
+		self.infection = self.infection + dt * infection_rate
+		self.productivity = self.productivity - self.infection * infection_rate * dt / 500
+	end
+end
+
+-- Update stats, that change with time.
+function update_stats(self, dt)
+	self.hunger = self.hunger + dt * hunger_rate
+	self.thirst = self.thirst + dt * thirst_rate
+	self.age = self.age + dt * age_rate
+	if (self.hunger >= 100) then
+		self.health = self.health - dt * hunger_rate
+	end
+	if (self.thirst >= 100) then
+		self.health = self.health - dt * thirst_rate
+	end
+	update_infection(self, dt)
+	if (self.health <= 0) then
+		die(self)
+	end
+end
+
+function eat(self, food)
+	self.hunger = self.hunger - food
+	if (self.hunger < 0) then
+		self.hunger = 0
+	end
+end
+
+function drink(self, water)
+	self.thirst = self.thirst - water
+	if (self.thirst < 0) then
+		self.thirst = 0
+	end
+end
+
+-- Stop moving and execute action.
+function stop_moving(self, action)
+	msg.post(".", "play_animation", {id = hash("Idle")})
+	action()
+end
+
+-- Move to position and then execute action.
+function move(self, position, action)
+	local delta = position - go.get_position()
+	msg.post(".", "play_animation", {id = get_direction(delta)})
+	self.state = States["MOVING"]
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, position, go.EASING_LINEAR, vmath.length(delta) / 200, 0, function() stop_moving(self, action) end)
+end
+
+-- Work.
+function work(self, dt)
+	-- If NPC should be gathering, check if he found something by that time.
+	if (self.state == States["GATHERING"]) then
+		self.working_time = self.working_time + dt
+		if (self.working_time > 100 / self.productivity) then
+			self.working_time = 0
+			msg.post(self.building, "gathered")
+		end
+	end
+end
+
+-- Move to the area of gathering resources and then start gathering.
+function start_gathering(self, x, y, r)
+	local radius = math.random() * r
+	local angle = math.rad(math.random(360))
+	local new_position = vmath.vector3(x + radius * math.cos(angle), y + radius * math.sin(angle), 0)
+	move(self, new_position, function() self.state = States["GATHERING"] end)
+end
+
+-------------------------------------------------
+-- Defold life-cycle
+-------------------------------------------------
+
+function init(self)
+	math.randomseed(os.time())
+	self.working_time = 0
+	self.building = nil
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	if (self.health > 0) then
+		update_stats(self, dt)
+		work(self, dt)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if self.health > 0 then
+		if message_id == hash("move") then
+			move(self, message.position)
+		end
+		if message_id == hash("gather") then
+			start_gathering(self, message.x, message.y, message.r)
+			self.building = sender
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end
