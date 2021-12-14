@@ -1,7 +1,98 @@
+-- Navigator stores information about graph and traffic
+-- and plots routes for cars.
+
+-- Graph
+
+-- Edge of the graph.
+Road = {}
+
+function Road:new(width, length)
+
+	local obj= {}
+	obj.width = width
+	obj.length = length
+	obj.cars = 0
+
+	-- Make object.
+	setmetatable(obj, self)
+	self.__index = self; return obj
+end
+
+local roads = {}
+local cities = {}
+local city_count = 0
+
+
+-- Functions.
+
+function add_road(city1, city2, width, length)
+	roads[city1][city2] = Road:new(width, length)
+	roads[city2][city1] = Road:new(width, length)
+end
+
+function add_city(city)
+	roads[city] = {}
+	city_count = city_count + 1
+end
+
+-- Plot route and return first road of it.
+function first_road(start, finish)
+	d = {}
+	p = {}
+	used = {}
+	for i = 1, city_count do
+		d[i] = math.huge
+		used[i] = false
+		p[i] = nil
+	end
+	d[start] = 0
+	for i = 1, city_count do
+		v = nil
+		for j = 1, city_count do
+			-- Find closest city, can be optimized.
+			if not(used[j]) and (v == nil or d[j] < d[v]) then
+				v = j
+			end
+		end
+		if d[v] == math.huge then
+			break
+		end
+		used[v] = true
+		for e, road in pairs(roads[v]) do
+			if d[v] + road.length < d[e] then
+				d[e] = d[v] + road.length
+				p[e] = v
+			end
+		end
+	end
+
+	-- Trace back the path.
+	next_city = finish
+	while p[next_city] ~= start do
+		next_city = p[next_city]
+	end
+	return roads[start][next_city]
+end
+
 function init(self)
 	-- Add initialization code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
+
+	add_city(1)
+	add_city(2)
+	add_city(3)
+	add_city(4)
+	add_city(5)
+	add_road(1, 2, 1, 10)
+	add_road(1, 5, 1, 10)
+	add_road(1, 3, 1, 30)
+	add_road(1, 4, 1, 50)
+	add_road(2, 4, 1, 40)
+	add_road(3, 5, 1, 10)
+	add_road(3, 4, 1, 20)
+
+	print(first_road(1, 4))
 end
 
 function final(self)
@@ -17,9 +108,7 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
+	
 end
 
 function on_input(self, action_id, action)
