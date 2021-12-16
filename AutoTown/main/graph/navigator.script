@@ -5,10 +5,11 @@
 
 -- Edge of the graph.
 Road = {}
-
-function Road:new(width, length)
+function Road:new(from, to, width, length)
 
 	local obj= {}
+	obj.from = from
+	obj.to = to
 	obj.width = width
 	obj.length = length
 	obj.cars = 0
@@ -16,6 +17,11 @@ function Road:new(width, length)
 	-- Make object.
 	setmetatable(obj, self)
 	self.__index = self; return obj
+end
+
+-- How much time will a car spend on a given road.
+function time_on_road(road)
+	return road.length * math.max(road.cars + 1 - road.width, 1)
 end
 
 local roads = {}
@@ -26,13 +32,25 @@ local city_count = 0
 -- Functions.
 
 function add_road(city1, city2, width, length)
-	roads[city1][city2] = Road:new(width, length)
-	roads[city2][city1] = Road:new(width, length)
+	roads[city1.number][city2.number] = Road:new(city1, city2, width, length)
+	roads[city2.number][city1.number] = Road:new(city2, city1, width, length)
 end
 
 function add_city(city)
 	roads[city] = {}
 	city_count = city_count + 1
+end
+
+-- Increment cars counter on the road.
+function add_car_riding(from, to)
+	roads[from][to].cars = roads[from][to].cars + 1
+	roads[to][from].cars = roads[to][from].cars + 1
+end
+
+-- Decrement cars counter on the road.
+function remove_car(from, to)
+	roads[from][to].cars = roads[from][to].cars - 1
+	roads[to][from].cars = roads[to][from].cars - 1
 end
 
 -- Plot route and return first road of it.
@@ -59,8 +77,8 @@ function first_road(start, finish)
 		end
 		used[v] = true
 		for e, road in pairs(roads[v]) do
-			if d[v] + road.length < d[e] then
-				d[e] = d[v] + road.length
+			if d[v] + time_on_road(road) < d[e] then
+				d[e] = d[v] + time_on_road(road)
 				p[e] = v
 			end
 		end
@@ -74,25 +92,14 @@ function first_road(start, finish)
 	return roads[start][next_city]
 end
 
+
+
+-- Object lifecycle.
+
 function init(self)
 	-- Add initialization code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
-
-	add_city(1)
-	add_city(2)
-	add_city(3)
-	add_city(4)
-	add_city(5)
-	add_road(1, 2, 1, 10)
-	add_road(1, 5, 1, 10)
-	add_road(1, 3, 1, 30)
-	add_road(1, 4, 1, 50)
-	add_road(2, 4, 1, 40)
-	add_road(3, 5, 1, 10)
-	add_road(3, 4, 1, 20)
-
-	print(first_road(1, 4))
 end
 
 function final(self)
@@ -108,7 +115,17 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	
+	if message_id == hash("road_is_finished") then
+		remove_car(message.from, message.to)
+	elseif message_id == hash("where_next") then
+		next_road = first_road(message.from, message.to)
+		add_car_riding(next_road.from.number, next_road.to.number)
+		msg.post(sender, "go_to", { road = next_road })
+	elseif message_id == hash("add_city") then
+		add_city(message.city)
+	elseif message_id == hash("add_road") then
+		add_road(message.from, message.to, message.width, message.length)
+	end
 end
 
 function on_input(self, action_id, action)
