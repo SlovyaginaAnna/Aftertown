@@ -4,13 +4,17 @@
 local navigator = nil
 
 -- How much time will a car spend on a given road.
-function time_on_road(road)
-	return road.length * math.max(road.cars + 1 - road.width, 1) / 5
+function time_on_road_left(self, road)
+	local delta = vmath.length(go.get_position(".") - road.to.position)
+	local full_path = vmath.length( road.to.position - road.from.position)
+	local done = delta / full_path
+	return done * road.length * math.max(road.cars + 1 - road.width, 1) / 5
 end
 
 -- Drive on the given road.
 function drive(self, road)
-	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, road.to.position, go.EASING_LINEAR, time_on_road(road), 0, function() road_is_finished(self, road) end)
+	print(road)
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, road.to.position, go.EASING_LINEAR, time_on_road_left(self, road), 0, function() road_is_finished(self, road) end)
 end
 
 -- Tell navigator that road is finished and ask where next.

@@ -21,10 +21,12 @@ end
 
 -- How much time will a car spend on a given road.
 function time_on_road(road)
-	return road.length * math.max(road.cars + 1 - road.width, 1)
+	return road.length * math.max((road.cars + 1) / road.width, 1)
 end
 
 local roads = {}
+-- Cars urls, for telling cars that they can speed up if possible, works as a stack.
+local cars = {}
 local cities = {}
 local city_count = 0
 
@@ -34,23 +36,30 @@ local city_count = 0
 function add_road(city1, city2, width, length)
 	roads[city1.number][city2.number] = Road:new(city1, city2, width, length)
 	roads[city2.number][city1.number] = Road:new(city2, city1, width, length)
+	cars[city2.number][city1.number] = {}
+	cars[city1.number][city2.number] = {}
 end
 
 function add_city(city)
 	roads[city] = {}
+	cars[city] = {}
 	city_count = city_count + 1
 end
 
 -- Increment cars counter on the road.
-function add_car_riding(from, to)
+function add_car_riding(car, from, to)
+	table.insert(cars[from][to], car)
 	roads[from][to].cars = roads[from][to].cars + 1
-	roads[to][from].cars = roads[to][from].cars + 1
 end
 
 -- Decrement cars counter on the road.
-function remove_car(from, to)
+function remove_car(car, from, to)
+	-- First car is removed, because it is added first and finish riding first.
+	table.remove(cars[from][to], 1)
 	roads[from][to].cars = roads[from][to].cars - 1
-	roads[to][from].cars = roads[to][from].cars - 1
+	for k, other_car in pairs(cars[from][to]) do
+		msg.post(other_car, "go_to", {road = roads[from][to]})
+	end
 end
 
 -- Plot route and return first road of it.
@@ -116,10 +125,10 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("road_is_finished") then
-		remove_car(message.from, message.to)
+		remove_car(sender, message.from, message.to)
 	elseif message_id == hash("where_next") then
 		next_road = first_road(message.from, message.to)
-		add_car_riding(next_road.from.number, next_road.to.number)
+		add_car_riding(sender, next_road.from.number, next_road.to.number)
 		msg.post(sender, "go_to", { road = next_road })
 	elseif message_id == hash("add_city") then
 		add_city(message.city)

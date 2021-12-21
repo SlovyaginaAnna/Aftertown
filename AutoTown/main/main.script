@@ -23,6 +23,8 @@ function init(self)
 	msg.post("/navigator", "add_road", { from = city3, to = city4, width = 1, length = 20 })
 	msg.post("/car", "start", {from = 1, to = 4, navigator = msg.url("/navigator")})
 	msg.post("/car1", "start", {from = 1, to = 4, navigator = msg.url("/navigator")})
+	msg.post("/car2", "start", {from = 1, to = 4, navigator = msg.url("/navigator")})
+	msg.post("/car3", "start", {from = 1, to = 4, navigator = msg.url("/navigator")})
 end
 
 function on_input(self, action_id, action)
