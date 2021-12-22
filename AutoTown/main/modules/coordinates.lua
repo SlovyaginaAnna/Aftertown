@@ -26,7 +26,7 @@ end
 function C.isEmpty(position)
 	for i =1, #C.coord,1 do
 		if C.coord[i].center.x == (position.x - position.x % 96) + 48 and
-		C.coord[i].center.y == (position.x - position.x % 96) + 48 then
+		C.coord[i].center.y == (position.y - position.y % 96) + 48 then
 			return C.coord[i].isEmpty
 		end
 	end
@@ -36,7 +36,7 @@ end
 function C.setSmth(position)
 	for i =1, #C.coord do
 		if C.coord[i].center.x == (position.x - position.x % 96) + 48 and
-		C.coord[i].center.y == (position.x - position.x % 96) + 48 then
+		C.coord[i].center.y == (position.y - position.y % 96) + 48 then
 			C.coord[i].isEmpty = false
 		end
 	end

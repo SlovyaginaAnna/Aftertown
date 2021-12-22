@@ -1,4 +1,4 @@
--- Car, which drives from one city to another.
+-- Car, which drives from one home to another.
 -- Car chooses route with navigator, that calculates the fastest route.
 
 local navigator = nil
@@ -26,8 +26,8 @@ function road_is_finished(self, road)
 end
 
 -- Ask navigator where to go next.
-function where_next(self, city)
-	msg.post(navigator, "where_next", { from = city, to = self.to })
+function where_next(self, home)
+	msg.post(navigator, "where_next", { from = home, to = self.to })
 end
 
 function init(self)

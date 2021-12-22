@@ -27,23 +27,23 @@ end
 local roads = {}
 -- Cars urls, for telling cars that they can speed up if possible, works as a stack.
 local cars = {}
-local cities = {}
-local city_count = 0
+local homes = {}
+local home_count = 0
 
 
 -- Functions.
 
-function add_road(city1, city2, width, length)
-	roads[city1.number][city2.number] = Road:new(city1, city2, width, length)
-	roads[city2.number][city1.number] = Road:new(city2, city1, width, length)
-	cars[city2.number][city1.number] = {}
-	cars[city1.number][city2.number] = {}
+function add_road(home1, home2, width, length)
+	roads[home1.number][home2.number] = Road:new(home1, home2, width, length)
+	roads[home2.number][home1.number] = Road:new(home2, home1, width, length)
+	cars[home2.number][home1.number] = {}
+	cars[home1.number][home2.number] = {}
 end
 
-function add_city(city)
-	roads[city] = {}
-	cars[city] = {}
-	city_count = city_count + 1
+function add_home(home)
+	roads[home] = {}
+	cars[home] = {}
+	home_count = home_count + 1
 end
 
 -- Increment cars counter on the road.
@@ -67,16 +67,16 @@ function first_road(start, finish)
 	d = {}
 	p = {}
 	used = {}
-	for i = 1, city_count do
+	for i = 1, home_count do
 		d[i] = math.huge
 		used[i] = false
 		p[i] = nil
 	end
 	d[start] = 0
-	for i = 1, city_count do
+	for i = 1, home_count do
 		v = nil
-		for j = 1, city_count do
-			-- Find closest city, can be optimized.
+		for j = 1, home_count do
+			-- Find closest home, can be optimized.
 			if not(used[j]) and (v == nil or d[j] < d[v]) then
 				v = j
 			end
@@ -94,11 +94,11 @@ function first_road(start, finish)
 	end
 
 	-- Trace back the path.
-	next_city = finish
-	while p[next_city] ~= start do
-		next_city = p[next_city]
+	next_home = finish
+	while p[next_home] ~= start do
+		next_home = p[next_home]
 	end
-	return roads[start][next_city]
+	return roads[start][next_home]
 end
 
 
@@ -130,8 +130,8 @@ function on_message(self, message_id, message, sender)
 		next_road = first_road(message.from, message.to)
 		add_car_riding(sender, next_road.from.number, next_road.to.number)
 		msg.post(sender, "go_to", { road = next_road })
-	elseif message_id == hash("add_city") then
-		add_city(message.city)
+	elseif message_id == hash("add_home") then
+		add_home(message.home)
 	elseif message_id == hash("add_road") then
 		add_road(message.from, message.to, message.width, message.length)
 	end
