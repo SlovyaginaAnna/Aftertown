@@ -6,12 +6,14 @@ local last_touch = nil
 function build_road(self, position)
 	if last_touch == nil then
 		last_touch = c.getCenter(position)
+		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 0), "/selected_cell")
 	else
 		position = c.getCenter(position)
 		local cell1 = {number = c.getCellNumber(last_touch), position = last_touch}
 		local cell2 = {number = c.getCellNumber(position), position = position}
 		-- Add road to navigator.
 		msg.post("/navigator", "add_road", { from = cell1, to = cell2, width = 1, length = vmath.length(position - last_touch) })
+		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
 		last_touch = nil
 	end
 end
