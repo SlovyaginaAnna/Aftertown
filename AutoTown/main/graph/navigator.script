@@ -27,23 +27,68 @@ end
 local roads = {}
 -- Cars urls, for telling cars that they can speed up if possible, works as a stack.
 local cars = {}
-local homes = {}
-local home_count = 0
+local cells = {}
+local cell_count = 0
 
 
 -- Functions.
 
-function add_road(home1, home2, width, length)
-	roads[home1.number][home2.number] = Road:new(home1, home2, width, length)
-	roads[home2.number][home1.number] = Road:new(home2, home1, width, length)
-	cars[home2.number][home1.number] = {}
-	cars[home1.number][home2.number] = {}
+-- Geometry
+function area(a, b, c)
+	return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
 end
 
-function add_home(home)
-	roads[home] = {}
-	cars[home] = {}
-	home_count = home_count + 1
+function intersect_1(a, b, c, d)
+	if a > b then
+		a, b = b, a
+	end
+	if c > d then
+		c, d = d, c
+	end
+	return math.max(a, c) <= math.min(b, d)
+end
+
+function intersect(road1, road2)
+	a = road1.from.position
+	b = road1.to.position
+	c = road2.from.position
+	d = road2.to.position
+	return intersect_1(a.x, b.x, c.x, d.x)
+		and intersect_1(a.y, b.y, c.y, d.y)
+		and area(a,b,c) * area(a,b,d) < 0
+		and area(c,d,a) * area(c,d,b) < 0
+end
+
+function can_add_road(cell1, cell2)
+	road = Road:new(cell1, cell2, width, length)
+	for i = 1, cell_count do
+		for j = 1, cell_count do
+			if roads[i][j] ~= nil and 
+			intersect(road, roads[i][j]) then
+				return false
+			end
+		end
+	end
+	return true
+end
+
+-- Return built road and nil if it is not possible.
+function add_road(cell1, cell2, width, length)
+	if cell1.number ~= cell2.number and can_add_road(cell1, cell2) then
+		roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
+		roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)
+		cars[cell2.number][cell1.number] = {}
+		cars[cell1.number][cell2.number] = {}
+		return roads[cell1.number][cell2.number]
+	else
+		return nil
+	end
+end
+
+function add_cell(cell)
+	roads[cell] = {}
+	cars[cell] = {}
+	cell_count = cell_count + 1
 end
 
 -- Increment cars counter on the road.
@@ -67,16 +112,16 @@ function first_road(start, finish)
 	d = {}
 	p = {}
 	used = {}
-	for i = 1, home_count do
+	for i = 1, cell_count do
 		d[i] = math.huge
 		used[i] = false
 		p[i] = nil
 	end
 	d[start] = 0
-	for i = 1, home_count do
+	for i = 1, cell_count do
 		v = nil
-		for j = 1, home_count do
-			-- Find closest home, can be optimized.
+		for j = 1, cell_count do
+			-- Find closest cell, can be optimized.
 			if not(used[j]) and (v == nil or d[j] < d[v]) then
 				v = j
 			end
@@ -94,14 +139,12 @@ function first_road(start, finish)
 	end
 
 	-- Trace back the path.
-	next_home = finish
-	while p[next_home] ~= start do
-		next_home = p[next_home]
+	next_cell = finish
+	while p[next_cell] ~= start do
+		next_cell = p[next_cell]
 	end
-	return roads[start][next_home]
+	return roads[start][next_cell]
 end
-
-
 
 -- Object lifecycle.
 
@@ -130,10 +173,13 @@ function on_message(self, message_id, message, sender)
 		next_road = first_road(message.from, message.to)
 		add_car_riding(sender, next_road.from.number, next_road.to.number)
 		msg.post(sender, "go_to", { road = next_road })
-	elseif message_id == hash("add_home") then
-		add_home(message.home)
+	elseif message_id == hash("add_cell") then
+		add_cell(message.cell)
 	elseif message_id == hash("add_road") then
-		add_road(message.from, message.to, message.width, message.length)
+		built_road = add_road(message.from, message.to, message.width, message.length)
+		if built_road ~= nil then
+			msg.post(sender, "add_road", {road = built_road})
+		end
 	end
 end
 
