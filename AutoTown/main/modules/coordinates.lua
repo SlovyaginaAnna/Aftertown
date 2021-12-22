@@ -23,6 +23,20 @@ function C.generate(position)
 	table.insert(C.coord, cStruct)
 end
 
+function C.getCenter(position)
+	return vmath.vector3(position.x - position.x % 96 + 48, position.y - position.y % 96 + 48, 0)
+end
+
+function C.getCellNumber(position)
+	for i =1, #C.coord,1 do
+		if C.coord[i].center.x == (position.x - position.x % 96) + 48 and
+		C.coord[i].center.y == (position.y - position.y % 96) + 48 then
+			return i
+		end
+	end
+	return nil
+end
+
 function C.isEmpty(position)
 	for i =1, #C.coord,1 do
 		if C.coord[i].center.x == (position.x - position.x % 96) + 48 and

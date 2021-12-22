@@ -1,4 +1,4 @@
-local c = require "scripts.coordinates"
+local c = require "coordinates"
 local H ={}
 H.homes	= {}  --таблиа хранящая все дома
 
