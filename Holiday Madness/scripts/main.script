@@ -1,0 +1,63 @@
+local c = require "scripts.coordinates"
+local h = require "scripts.home"
+local s = require "scripts.shop"
+local home_count = 20
+local spawning_home_time = 1
+local spawning_shop_time = 5
+
+function init(self)
+	math.randomseed(os.time())
+	c.initCoord()
+	s.initShops()
+	h.initHomes()
+	timer.delay(spawning_home_time, true, add_homes, 0)
+	timer.delay(spawning_shop_time, true, add_shops, 1)
+	
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("check_home_timer") then
+		if h.count == home_count then
+			timer.cancel(0)
+		end
+	elseif message_id == hash("check_shop_timer") then
+		if s.count == shop_count then
+			timer.cancel(1)
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end
+
+add_homes = function()
+	h.addHome()
+end
+
+add_shops = function()
+	s.addShop()
+end
