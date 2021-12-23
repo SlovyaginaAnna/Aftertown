@@ -1,0 +1,202 @@
+-- Navigator stores information about graph and traffic
+-- and plots routes for cars.
+
+-- Graph
+
+-- Edge of the graph.
+Road = {}
+function Road:new(from, to, width, length)
+
+	local obj= {}
+	obj.from = from
+	obj.to = to
+	obj.width = width
+	obj.length = length
+	obj.cars = 0
+
+	-- Make object.
+	setmetatable(obj, self)
+	self.__index = self; return obj
+end
+
+-- How much time will a car spend on a given road.
+function time_on_road(road)
+	return road.length * math.max((road.cars + 1) / road.width, 1)
+end
+
+local roads = {}
+-- Cars urls, for telling cars that they can speed up if possible, works as a stack.
+local cars = {}
+local cells = {}
+local cell_count = 0
+
+
+-- Functions.
+
+-- Geometry
+function area(a, b, c)
+	return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+end
+
+function intersect_1(a, b, c, d)
+	if a > b then
+		a, b = b, a
+	end
+	if c > d then
+		c, d = d, c
+	end
+	return math.max(a, c) <= math.min(b, d)
+end
+
+function intersect(road1, road2)
+	a = road1.from.position
+	b = road1.to.position
+	c = road2.from.position
+	d = road2.to.position
+	return intersect_1(a.x, b.x, c.x, d.x)
+		and intersect_1(a.y, b.y, c.y, d.y)
+		and area(a,b,c) * area(a,b,d) < 0
+		and area(c,d,a) * area(c,d,b) < 0
+end
+
+function can_add_road(cell1, cell2)
+	road = Road:new(cell1, cell2, width, length)
+	for i = 1, cell_count do
+		for j = 1, cell_count do
+			if roads[i][j] ~= nil and 
+			intersect(road, roads[i][j]) then
+				return false
+			end
+		end
+	end
+	return true
+end
+
+-- Return built road and nil if it is not possible.
+function add_road(cell1, cell2, width, length)
+	if cell1.number ~= cell2.number and can_add_road(cell1, cell2) then
+		roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
+		roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)
+		cars[cell2.number][cell1.number] = {}
+		cars[cell1.number][cell2.number] = {}
+		return roads[cell1.number][cell2.number]
+	else
+		return nil
+	end
+end
+
+function add_cell(cell)
+	roads[cell] = {}
+	cars[cell] = {}
+	cell_count = cell_count + 1
+end
+
+-- Increment cars counter on the road.
+function add_car_riding(car, from, to)
+	table.insert(cars[from][to], car)
+	roads[from][to].cars = roads[from][to].cars + 1
+end
+
+-- Decrement cars counter on the road.
+function remove_car(car, from, to)
+	-- First car is removed, because it is added first and finish riding first.
+	table.remove(cars[from][to], 1)
+	roads[from][to].cars = roads[from][to].cars - 1
+	for k, other_car in pairs(cars[from][to]) do
+		msg.post(other_car, "go_to", {road = roads[from][to]})
+	end
+end
+
+-- Plot route and return first road of it.
+function first_road(start, finish)
+	d = {}
+	p = {}
+	used = {}
+	for i = 1, cell_count do
+		d[i] = math.huge
+		used[i] = false
+		p[i] = nil
+	end
+	d[start] = 0
+	for i = 1, cell_count do
+		v = nil
+		for j = 1, cell_count do
+			-- Find closest cell, can be optimized.
+			if not(used[j]) and (v == nil or d[j] < d[v]) then
+				v = j
+			end
+		end
+		if d[v] == math.huge then
+			break
+		end
+		used[v] = true
+		for e, road in pairs(roads[v]) do
+			if d[v] + time_on_road(road) < d[e] then
+				d[e] = d[v] + time_on_road(road)
+				p[e] = v
+			end
+		end
+	end
+
+	-- Trace back the path.
+	next_cell = finish
+	while p[next_cell] ~= start do
+		next_cell = p[next_cell]
+	end
+	return roads[start][next_cell]
+end
+
+-- Object lifecycle.
+
+function init(self)
+	-- Add initialization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("road_is_finished") then
+		remove_car(sender, message.from, message.to)
+	elseif message_id == hash("where_next") then
+		next_road = first_road(message.from, message.to)
+		add_car_riding(sender, next_road.from.number, next_road.to.number)
+		msg.post(sender, "go_to", { road = next_road })
+	elseif message_id == hash("add_cell") then
+		add_cell(message.cell)
+	elseif message_id == hash("add_road") then
+		built_road = add_road(message.from, message.to, message.width, message.length)
+		if built_road ~= nil then
+			msg.post(sender, "add_road", {road = built_road})
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

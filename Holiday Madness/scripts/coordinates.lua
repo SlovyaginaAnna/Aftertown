@@ -67,7 +67,7 @@ end
 
 function C.index(position)
 	col = (position.x - position.x % C.cell + C.cell) / C.cell
-	r =  (position.y - position.x % C.cell + C.cell) / C.cell
+	r =  (position.y - position.y % C.cell + C.cell) / C.cell
 	index = (col - 1) * C.rows + r % (C.rows + 1)
 	return index
 end
