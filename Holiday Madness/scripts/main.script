@@ -30,7 +30,7 @@ function draw_road(self, road)
 	local direction = (finish - start) / 2
 	local rotation = vmath.quat_rotation_z(math.atan2(direction.y, direction.x))
 	go.set_rotation(rotation, road)
-	local position = vmath.vector3((start + direction).x, (start + direction).y, 1)
+	local position = vmath.vector3((start + direction).x, (start + direction).y, 0.6)
 	go.set_position(position, road)
 end
 
