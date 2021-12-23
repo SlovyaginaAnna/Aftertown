@@ -1,0 +1,78 @@
+-- Car, which drives from one home to another.
+-- Car chooses route with navigator, that calculates the fastest route.
+
+local navigator = nil
+
+-- How much time will a car spend on a given road.
+function time_on_road_left(self, road)
+	local delta = vmath.length(go.get_position(".") - road.to.position)
+	local full_path = vmath.length( road.to.position - road.from.position)
+	local done = delta / full_path
+	return done * road.length * math.max(road.cars + 1 - road.width, 1) / 5
+end
+
+-- Drive on the given road.
+function drive(self, road)
+	print(road)
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, road.to.position, go.EASING_LINEAR, time_on_road_left(self, road), 0, function() road_is_finished(self, road) end)
+end
+
+-- Tell navigator that road is finished and ask where next.
+function road_is_finished(self, road)
+	msg.post(navigator, "road_is_finished", { from = road.from.number, to = road.to.number })
+	if road.to.number ~= self.to then
+		where_next(self, road.to.number)
+	end
+end
+
+-- Ask navigator where to go next.
+function where_next(self, home)
+	msg.post(navigator, "where_next", { from = home, to = self.to })
+end
+
+function init(self)
+	-- Add initialization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("start") then
+		self.from = message.from
+		self.to = message.to
+		navigator = message.navigator
+		where_next(self, message.from)
+	elseif message_id == hash("go_to") then
+		drive(self, message.road)
+	end
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

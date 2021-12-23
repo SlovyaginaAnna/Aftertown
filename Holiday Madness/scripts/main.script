@@ -1,18 +1,56 @@
 local c = require "scripts.coordinates"
 local h = require "scripts.home"
 local s = require "scripts.shop"
-local home_count = 20
+local home_count = 10
 local spawning_home_time = 1
 local spawning_shop_time = 5
+local shop_count = 6
+local day_time = 5
+local night_time = 3
+
+-- Position of last touch.
+local last_touch = nil
+
+function build_road(self, position)
+	if last_touch == nil then
+		last_touch = c.indToPos(c.index(position))
+		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 1), "/selected_cell")
+	else
+		msg.post("/navigator", "add_road", {from = last_touch, to = position})
+		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
+		last_touch = nil
+	end
+end
+
+function draw_road(self, road)
+	local start = road.from.position
+	local finish = road.to.position
+
+	local road = factory.create("/roads#factory", start)
+	go.set(road, "scale.x", vmath.length(finish - start)/1080)
+	go.set(road, "scale.y", 1/80)
+
+	local direction = (finish - start) / 2
+	local rotation = vmath.quat_rotation_z(math.atan2(direction.y, direction.x))
+	go.set_rotation(rotation, road)
+	local position = vmath.vector3((start + direction).x, (start + direction).y, 1)
+	go.set_position(position, road)
+end
 
 function init(self)
+	msg.post(".", "acquire_input_focus")
+	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 	math.randomseed(os.time())
 	c.initCoord()
 	s.initShops()
 	h.initHomes()
 	timer.delay(spawning_home_time, true, add_homes, 0)
 	timer.delay(spawning_shop_time, true, add_shops, 1)
-	
+	-- Init navigator.
+	for i = 1, #(c.coord) do
+		msg.post("/navigator", "add_cell", {cell = i})
+	end
+	day()
 end
 
 function final(self)
@@ -33,19 +71,16 @@ function on_message(self, message_id, message, sender)
 		if s.count == shop_count then
 			timer.cancel(1)
 		end
+	elseif message_id == hash("add_road") then
+		draw_road(self, message.road)
 	end
 end
 
 function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
+	if action_id == hash("touch") and action.pressed then
+		local position = vmath.vector3(action.x, action.y, 0)
+		build_road(self, position)
+	end
 end
 
 function on_reload(self)
@@ -60,4 +95,14 @@ end
 
 add_shops = function()
 	s.addShop()
+end
+
+day = function()
+	msg.post("/navigator", "day")
+	timer.delay(day_time, false, night)
+end
+
+night = function()
+	msg.post("/navigator", "send_home")
+	timer.delay(night_time, false, day)
 end
