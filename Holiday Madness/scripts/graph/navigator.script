@@ -1,6 +1,8 @@
 -- Navigator stores information about graph and traffic
 -- and plots routes for cars.
 
+local c = require "scripts.coordinates"
+
 -- Graph
 
 -- Edge of the graph.
@@ -49,18 +51,31 @@ function intersect_1(a, b, c, d)
 end
 
 function intersect(road1, road2)
-	a = road1.from.position
-	b = road1.to.position
-	c = road2.from.position
-	d = road2.to.position
-	return intersect_1(a.x, b.x, c.x, d.x)
-		and intersect_1(a.y, b.y, c.y, d.y)
-		and area(a,b,c) * area(a,b,d) < 0
-		and area(c,d,a) * area(c,d,b) < 0
+	local a1 = road1.from.position
+	local b1 = road1.to.position
+	local a2 = road2.from.position
+	local b2 = road2.to.position
+	return intersect_1(a1.x, b1.x, a2.x, b2.x)
+		and intersect_1(a1.y, b1.y, a2.y, b2.y)
+		and area(a1,b1,a2) * area(a1,b1,b2) < 0
+		and area(a2,b2,a1) * area(a2,b2,b1) < 0
+end
+
+function gcd(a, b)
+	if b < 0 then
+		b = -b
+	end
+	if a < 0 then
+		a = -a
+	end
+	if b == 0 then
+		return math.max(a, 1)
+	end
+	return gcd(b, a%b)
 end
 
 function can_add_road(cell1, cell2)
-	road = Road:new(cell1, cell2, width, length)
+	road = Road:new(cell1, cell2, 1, 1)
 	for i = 1, cell_count do
 		for j = 1, cell_count do
 			if roads[i][j] ~= nil and 
@@ -74,7 +89,7 @@ end
 
 -- Return built road and nil if it is not possible.
 function add_road(cell1, cell2, width, length)
-	if cell1.number ~= cell2.number and can_add_road(cell1, cell2) then
+	if cell1.number ~= cell2.number then
 		roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
 		roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)
 		cars[cell2.number][cell1.number] = {}
@@ -82,6 +97,26 @@ function add_road(cell1, cell2, width, length)
 		return roads[cell1.number][cell2.number]
 	else
 		return nil
+	end
+end
+
+function plan_roads(start, finish, sender)
+	finish = c.indToPos(c.index(finish))
+	local cell1 = {number = c.index(start), position = start}
+	local last_cell = {number = c.index(finish), position = finish}
+	if can_add_road(cell1, last_cell) then
+		-- TODO: remove magic numbers.
+		local steps = gcd((finish.x - start.x) / 96, (finish.y - start.y) / 96)
+		local step = (finish - start) / steps
+		local next_pos = start + step
+		for i = 1, steps do
+			local cell2 = {number = c.index(next_pos), position = next_pos}
+			-- Add road to navigator.
+			local built_road = add_road(cell1, cell2, 1, vmath.length(next_pos - start))
+			msg.post(sender, "add_road", {road = built_road })
+			cell1 = {number = c.index(next_pos), position = next_pos}
+			next_pos = next_pos + step
+		end
 	end
 end
 
@@ -176,10 +211,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("add_cell") then
 		add_cell(message.cell)
 	elseif message_id == hash("add_road") then
-		built_road = add_road(message.from, message.to, message.width, message.length)
-		if built_road ~= nil then
-			msg.post(sender, "add_road", {road = built_road})
-		end
+		plan_roads(message.from, message.to, sender)
 	end
 end
 

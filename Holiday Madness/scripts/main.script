@@ -8,37 +8,12 @@ local spawning_shop_time = 5
 -- Position of last touch.
 local last_touch = nil
 
-function gcd(a, b)
-	if b < 0 then
-		b = -b
-	end
-	if a < 0 then
-		a = -a
-	end
-	if b == 0 then
-		return math.max(a, 1)
-	end
-	return gcd(b, a%b)
-end
-
 function build_road(self, position)
 	if last_touch == nil then
 		last_touch = c.indToPos(c.index(position))
 		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 1), "/selected_cell")
 	else
-		position = c.indToPos(c.index(position))
-		local cell1 = {number = c.index(last_touch), position = last_touch}
-		-- TODO: remove magic numbers.
-		local steps = gcd((position.x - last_touch.x) / 96, (position.y - last_touch.y) / 96)
-		local step = (position - last_touch) / steps
-		local next_pos = last_touch + step
-		for i = 1, steps do
-			local cell2 = {number = c.index(next_pos), position = next_pos}
-			-- Add road to navigator.
-			msg.post("/navigator", "add_road", { from = cell1, to = cell2, width = 1, length = vmath.length(next_pos - last_touch) })
-			cell1 = {number = c.index(next_pos), position = next_pos}
-			next_pos = next_pos + step
-		end
+		msg.post("/navigator", "add_road", {from = last_touch, to = position})
 		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
 		last_touch = nil
 	end
@@ -48,7 +23,6 @@ function draw_road(self, road)
 	local start = road.from.position
 	local finish = road.to.position
 
-	print(road)
 	local road = factory.create("/roads#factory", start)
 	go.set(road, "scale.x", vmath.length(finish - start)/1080)
 	go.set(road, "scale.y", 1/80)
