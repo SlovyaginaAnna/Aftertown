@@ -112,7 +112,7 @@ function plan_roads(start, finish, sender)
 		for i = 1, steps do
 			local cell2 = {number = c.index(next_pos), position = next_pos}
 			-- Add road to navigator.
-			local built_road = add_road(cell1, cell2, 1, vmath.length(next_pos - start))
+			local built_road = add_road(cell1, cell2, 1, vmath.length(next_pos - cell1.position))
 			msg.post(sender, "add_road", {road = built_road })
 			cell1 = {number = c.index(next_pos), position = next_pos}
 			next_pos = next_pos + step
@@ -175,8 +175,11 @@ function first_road(start, finish)
 
 	-- Trace back the path.
 	next_cell = finish
-	while p[next_cell] ~= start do
+	while next_cell ~= nil and p[next_cell] ~= start do
 		next_cell = p[next_cell]
+	end
+	if next_cell == nil then
+		return nil
 	end
 	return roads[start][next_cell]
 end
@@ -184,9 +187,7 @@ end
 -- Object lifecycle.
 
 function init(self)
-	-- Add initialization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+
 end
 
 function final(self)
@@ -196,9 +197,7 @@ function final(self)
 end
 
 function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	
 end
 
 function on_message(self, message_id, message, sender)
@@ -206,8 +205,12 @@ function on_message(self, message_id, message, sender)
 		remove_car(sender, message.from, message.to)
 	elseif message_id == hash("where_next") then
 		next_road = first_road(message.from, message.to)
-		add_car_riding(sender, next_road.from.number, next_road.to.number)
-		msg.post(sender, "go_to", { road = next_road })
+		if next_road ~= nil then
+			add_car_riding(sender, next_road.from.number, next_road.to.number)
+			msg.post(sender, "go_to", { road = next_road })
+		else
+			msg.post(sender, "wait")
+		end
 	elseif message_id == hash("add_cell") then
 		add_cell(message.cell)
 	elseif message_id == hash("add_road") then

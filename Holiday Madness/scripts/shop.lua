@@ -42,4 +42,8 @@ function S.create(position, varient)
 	msg.post("/go#main", "check_shop_timer")
 end
 
+function S.getShop()
+	return S.shops[1]
+end
+
 return S

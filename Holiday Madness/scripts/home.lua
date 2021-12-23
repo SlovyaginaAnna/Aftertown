@@ -24,9 +24,9 @@ function H.create(position, varient)
 		varient = math.random(0, 1)
 	end
 	if varient == 0 then 
-		obj = factory.create("/homeFactory#factory", position, nil, {}, 1.0)
+		obj = factory.create("/homeFactory#factory", position, nil, {number = c.index(position)}, 1.0)
 	else 
-		obj = factory.create("/home1Factory#factory", position, nil, {}, 1.0)
+		obj = factory.create("/home1Factory#factory", position, nil, {number = c.index(position)}, 1.0)
 	end
 	local hStruct = {
 		pos 	= position,
