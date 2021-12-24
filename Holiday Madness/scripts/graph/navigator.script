@@ -83,6 +83,10 @@ function can_add_road(cell1, cell2)
 	or math.abs(cell1.position.y - cell2.position.y) > c.cell then
 		return false
 	end
+	if not c.isEmpty(cell1.number) and c.road_built[cell1.number]
+	or not c.isEmpty(cell2.number) and c.road_built[cell2.number] then
+		return false
+	end
 	road = Road:new(cell1, cell2, 1, 1)
 	for i = 1, cell_count do
 		for j = 1, cell_count do
@@ -102,6 +106,9 @@ function add_road(cell1, cell2)
 	roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)
 	cars[cell2.number][cell1.number] = {}
 	cars[cell1.number][cell2.number] = {}
+	
+	c.road_built[cell1.number] = true
+	c.road_built[cell2.number] = true
 	return roads[cell1.number][cell2.number]
 end
 

@@ -17,7 +17,10 @@ end
 
 -- Drive on the given road.
 function drive(self, road)
-	local position = vmath.vector3(road.to.position.x, road.to.position.y, 1)
+	local position = vmath.vector3(road.to.position.x, road.to.position.y, 0.65)
+	local direction = road.to.position - road.from.position
+	local rotation = vmath.quat_rotation_z(-math.pi / 2 + math.atan2(direction.y, direction.x))
+	go.set_rotation(rotation, ".")
 	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, position, go.EASING_LINEAR, time_on_road_left(self, road), 0, function() road_is_finished(self, road) end)
 end
 
@@ -36,6 +39,9 @@ function init(self)
 	-- Add initialization code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
+	if self.Color == 0 then
+		msg.post("#sprite", "play_animation", {id = hash("CAR_green")})
+	end
 end
 
 function final(self)

@@ -1,6 +1,8 @@
 local C = {}
 C.coord	= {}  --таблица, хранящая все клетки 
 C.road_width = {} --таблица, хранящая ширину дороги, которую можно здесь построить
+C.road_built = {} --таблица, хранящая, построена ли на этой клетке дорога (для того, чтобы
+				  -- к одному дому подходила только одна дорога)
 C.rows = 11
 C.columns = 20
 C.cell = 96
@@ -27,6 +29,7 @@ function C.generate(position)
 	}
 	table.insert(C.coord, cStruct)
 	table.insert(C.road_width, 1)
+	table.insert(C.road_built, false)
 end
 
 function C.isEmpty(index)
