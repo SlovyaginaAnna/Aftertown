@@ -1,4 +1,4 @@
-local spawning_cars_time = 10
+local spawning_cars_time = 1
 go.property("number", 0)
 
 function add_car(self)

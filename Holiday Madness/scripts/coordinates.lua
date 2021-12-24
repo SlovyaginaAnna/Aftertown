@@ -1,5 +1,6 @@
-local C ={}
-C.coord	= {}  --таблиа хранящая все клетки 
+local C = {}
+C.coord	= {}  --таблица, хранящая все клетки 
+C.road_width = {} --таблица, хранящая ширину дороги, которую можно здесь построить
 C.rows = 11
 C.columns = 20
 C.cell = 96
@@ -25,6 +26,7 @@ function C.generate(position)
 		handle = nil
 	}
 	table.insert(C.coord, cStruct)
+	table.insert(C.road_width, 1)
 end
 
 function C.isEmpty(index)

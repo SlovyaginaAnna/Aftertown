@@ -95,7 +95,9 @@ function can_add_road(cell1, cell2)
 	return true
 end
 
-function add_road(cell1, cell2, width, length)
+function add_road(cell1, cell2)
+	width = math.min(c.road_width[cell1.number], c.road_width[cell2.number])
+	length = vmath.length(cell2.position - cell1.position)
 	roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
 	roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)
 	cars[cell2.number][cell1.number] = {}
@@ -110,7 +112,7 @@ function plan_roads(start, finish, sender)
 	local first_cell = {number = c.index(start), position = start}
 	local last_cell = {number = c.index(finish), position = finish}
 	if can_add_road(first_cell, last_cell) then
-		local built_road = add_road(first_cell, last_cell, 1, vmath.length(last_cell.position - first_cell.position))
+		local built_road = add_road(first_cell, last_cell)
 		msg.post(sender, "add_road", {road = built_road })
 	end
 end
