@@ -1,12 +1,12 @@
 local spawning_cars_time = 10
 go.property("number", 0)
 
-function add_car(self)
-	car = factory.create("main:/cars#factory", go.get_position("."), nil, {Color = 0}, 1.0)
+function add_car1(self)
+	car = factory.create("main:/cars#factory", go.get_position("."), nil, {Color = 1}, 1.0)
 	local navigator = msg.url("main", "/navigator", "")
 	msg.post(car, "start", {from = self.number, to = nil, navigator = navigator})
 end
 
 function init(self)
-	timer.delay(spawning_cars_time, true, function() add_car(self) end)
+	timer.delay(spawning_cars_time, true, function() add_car1(self) end)
 end

@@ -37,14 +37,11 @@ function S.create(position, varient)
 	local hStruct = {
 		pos 	= position,
 		url 	= obj, 
+		color   = varient,
 	}
 	c.setSmth(position, obj)
 	table.insert(S.shops, hStruct)
 	msg.post("/go#main", "check_shop_timer")
-end
-
-function S.getShop()
-	return S.shops[1]
 end
 
 return S
