@@ -28,6 +28,7 @@ function S.create(position, varient)
 	if varient == -1 then
 		varient = math.random(0, 1)
 	end
+	position.z = 0.7
 	if varient == 0 then 
 		obj = factory.create("/shopFactory#factory", position, nil, {}, 1.0)
 	else 
@@ -36,6 +37,7 @@ function S.create(position, varient)
 	local hStruct = {
 		pos 	= position,
 		url 	= obj, 
+		color   = varient,
 	}
 	c.setSmth(position, obj)
 	table.insert(S.shops, hStruct)

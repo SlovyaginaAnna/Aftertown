@@ -2,7 +2,7 @@ local c = require "scripts.coordinates"
 local h = require "scripts.home"
 local s = require "scripts.shop"
 local home_count = 20
-local spawning_home_time = 1
+local spawning_home_time = 10
 local spawning_shop_time = 5
 
 -- Position of last touch.
@@ -30,8 +30,14 @@ function draw_road(self, road)
 	local direction = (finish - start) / 2
 	local rotation = vmath.quat_rotation_z(math.atan2(direction.y, direction.x))
 	go.set_rotation(rotation, road)
-	local position = vmath.vector3((start + direction).x, (start + direction).y, 1)
+	local position = vmath.vector3((start + direction).x, (start + direction).y, 0.6)
 	go.set_position(position, road)
+end
+
+function set_widths(self)
+	for i = 1, #(c.coord) do
+		c.road_width[i] = 1
+	end
 end
 
 function init(self)
@@ -41,6 +47,7 @@ function init(self)
 	c.initCoord()
 	s.initShops()
 	h.initHomes()
+	set_widths(self)
 	timer.delay(spawning_home_time, true, add_homes, 0)
 	timer.delay(spawning_shop_time, true, add_shops, 1)
 	-- Init navigator.

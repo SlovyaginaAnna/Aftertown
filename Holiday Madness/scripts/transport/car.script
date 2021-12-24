@@ -1,33 +1,35 @@
+local s = require("scripts.shop")
+local c = require("scripts.coordinates")
+
 -- Car, which drives from one home to another.
 -- Car chooses route with navigator, that calculates the fastest route.
 
 local navigator = nil
+go.property("Color", 0)
 
 -- How much time will a car spend on a given road.
 function time_on_road_left(self, road)
 	local delta = vmath.length(go.get_position(".") - road.to.position)
 	local full_path = vmath.length( road.to.position - road.from.position)
 	local done = delta / full_path
-	return done * road.length * math.max(road.cars + 1 - road.width, 1) / 5
+	return done * road.length * math.max(road.cars + 1 - road.width, 1) / 100
 end
 
 -- Drive on the given road.
 function drive(self, road)
-	print(road)
-	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, road.to.position, go.EASING_LINEAR, time_on_road_left(self, road), 0, function() road_is_finished(self, road) end)
+	local position = vmath.vector3(road.to.position.x, road.to.position.y, 1)
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, position, go.EASING_LINEAR, time_on_road_left(self, road), 0, function() road_is_finished(self, road) end)
 end
 
 -- Tell navigator that road is finished and ask where next.
 function road_is_finished(self, road)
 	msg.post(navigator, "road_is_finished", { from = road.from.number, to = road.to.number })
-	if road.to.number ~= self.to then
-		where_next(self, road.to.number)
-	end
+	where_next(self, road.to.number)
 end
 
 -- Ask navigator where to go next.
 function where_next(self, home)
-	msg.post(navigator, "where_next", { from = home, to = self.to })
+	msg.post(navigator, "where_next", { from = home, to = self.to, color = self.Color })
 end
 
 function init(self)
@@ -56,6 +58,10 @@ function on_message(self, message_id, message, sender)
 		where_next(self, message.from)
 	elseif message_id == hash("go_to") then
 		drive(self, message.road)
+	elseif message_id == hash("wait") then
+		timer.delay(1, false, function() where_next(self, self.from) end)
+	elseif message_id == hash("done") then
+		go.delete(".")
 	end
 end
 
