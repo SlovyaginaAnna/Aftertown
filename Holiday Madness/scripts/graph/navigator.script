@@ -75,6 +75,13 @@ function gcd(a, b)
 end
 
 function can_add_road(cell1, cell2)
+	if cell1.number == cell2.number then
+		return false
+	end
+	if math.abs(cell1.position.x - cell2.position.x) > c.cell
+	or math.abs(cell1.position.y - cell2.position.y) > c.cell then
+		return false
+	end
 	road = Road:new(cell1, cell2, 1, 1)
 	for i = 1, cell_count do
 		for j = 1, cell_count do
@@ -87,36 +94,23 @@ function can_add_road(cell1, cell2)
 	return true
 end
 
--- Return built road and nil if it is not possible.
 function add_road(cell1, cell2, width, length)
-	if cell1.number ~= cell2.number then
-		roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
-		roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)
-		cars[cell2.number][cell1.number] = {}
-		cars[cell1.number][cell2.number] = {}
-		return roads[cell1.number][cell2.number]
-	else
-		return nil
-	end
+	roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
+	roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)
+	cars[cell2.number][cell1.number] = {}
+	cars[cell1.number][cell2.number] = {}
+	return roads[cell1.number][cell2.number]
 end
 
 function plan_roads(start, finish, sender)
+	-- Center coordinates.
+	start = c.indToPos(c.index(start))
 	finish = c.indToPos(c.index(finish))
-	local cell1 = {number = c.index(start), position = start}
+	local first_cell = {number = c.index(start), position = start}
 	local last_cell = {number = c.index(finish), position = finish}
-	if can_add_road(cell1, last_cell) then
-		-- TODO: remove magic numbers.
-		local steps = gcd((finish.x - start.x) / 96, (finish.y - start.y) / 96)
-		local step = (finish - start) / steps
-		local next_pos = start + step
-		for i = 1, steps do
-			local cell2 = {number = c.index(next_pos), position = next_pos}
-			-- Add road to navigator.
-			local built_road = add_road(cell1, cell2, 1, vmath.length(next_pos - cell1.position))
-			msg.post(sender, "add_road", {road = built_road })
-			cell1 = {number = c.index(next_pos), position = next_pos}
-			next_pos = next_pos + step
-		end
+	if can_add_road(first_cell, last_cell) then
+		local built_road = add_road(first_cell, last_cell, 1, vmath.length(last_cell.position - first_cell.position))
+		msg.post(sender, "add_road", {road = built_road })
 	end
 end
 
