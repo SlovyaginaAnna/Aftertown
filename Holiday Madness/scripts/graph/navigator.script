@@ -142,6 +142,7 @@ function remove_car(car, from, to)
 	table.remove(cars[from][to], 1)
 	roads[from][to].cars = roads[from][to].cars - 1
 	for k, other_car in pairs(cars[from][to]) do
+		go.set(other_car, "CarsInFront", go.get(other_car, "CarsInFront") - 1)
 		msg.post(other_car, "go_to", {road = roads[from][to]})
 	end
 end
@@ -225,6 +226,7 @@ function on_message(self, message_id, message, sender)
 			msg.post(sender, "done")
 		else
 			add_car_riding(sender, next_road.from.number, next_road.to.number)
+			go.set(sender, "CarsInFront", next_road.cars - 1)
 			msg.post(sender, "go_to", { road = next_road })
 		end
 	elseif message_id == hash("add_cell") then

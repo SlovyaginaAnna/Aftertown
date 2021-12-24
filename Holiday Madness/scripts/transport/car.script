@@ -6,13 +6,14 @@ local c = require("scripts.coordinates")
 
 local navigator = nil
 go.property("Color", 0)
+go.property("CarsInFront", 0)
 
 -- How much time will a car spend on a given road.
 function time_on_road_left(self, road)
 	local delta = vmath.length(go.get_position(".") - road.to.position)
 	local full_path = vmath.length( road.to.position - road.from.position)
 	local done = delta / full_path
-	return done * road.length * math.max(road.cars + 1 - road.width, 1) / 100
+	return done * road.length * math.max((self.CarsInFront + 1) / road.width, 1) / 100
 end
 
 -- Drive on the given road.
@@ -21,7 +22,8 @@ function drive(self, road)
 	local direction = road.to.position - road.from.position
 	local rotation = vmath.quat_rotation_z(-math.pi / 2 + math.atan2(direction.y, direction.x))
 	go.set_rotation(rotation, ".")
-	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, position, go.EASING_LINEAR, time_on_road_left(self, road), 0, function() road_is_finished(self, road) end)
+	time = time_on_road_left(self, road)
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, position, go.EASING_LINEAR, time, 0, function() road_is_finished(self, road) end)
 end
 
 -- Tell navigator that road is finished and ask where next.
