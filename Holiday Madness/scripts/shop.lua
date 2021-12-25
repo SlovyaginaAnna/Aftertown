@@ -10,9 +10,9 @@ function S.initShops()
 	for i = 0, 1 do
 		indexes = {}
 		while indexes[1] == nil do
-			indexes = c.randIndex()
+			indexes = c.randColAndRow()
 		end
-		position = c.indToPos(indexes)
+		position = c.colAndRowToPos(indexes)
 		position.z = 1
 		S.create(position, i)
 	end

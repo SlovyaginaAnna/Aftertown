@@ -79,12 +79,12 @@ function can_add_road(cell1, cell2)
 	if cell1.number == cell2.number then
 		return false
 	end
-	if math.abs(cell1.position.x - cell2.position.x) > c.cell
-	or math.abs(cell1.position.y - cell2.position.y) > c.cell then
+	if math.abs(cell1.position.x - cell2.position.x) >  c.cell
+	or math.abs(cell1.position.y - cell2.position.y) >  c.cell then
 		return false
 	end
-	if not c.isEmpty(cell1.number) and c.road_built[cell1.number]
-	or not c.isEmpty(cell2.number) and c.road_built[cell2.number] then
+	if not c.isEmptyIndex(cell1.number) and c.road_built[cell1.number]
+	or not c.isEmptyIndex(cell2.number) and c.road_built[cell2.number] then
 		return false
 	end
 	road = Road:new(cell1, cell2, 1, 1)
@@ -114,8 +114,8 @@ end
 
 function plan_roads(start, finish, sender)
 	-- Center coordinates.
-	start = c.indToPos(c.index(start))
-	finish = c.indToPos(c.index(finish))
+	start = c.colAndRowToPos(c.colAndRow(start))
+	finish = c.colAndRowToPos(c.colAndRow(finish))
 	local first_cell = {number = c.index(start), position = start}
 	local last_cell = {number = c.index(finish), position = finish}
 	if can_add_road(first_cell, last_cell) then

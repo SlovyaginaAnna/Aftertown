@@ -10,10 +10,10 @@ function H.initHomes()
 end
 
 function H.addHome()	
-	index = c.randIndex() 
+	index = c.randColAndRow() 
 	if index[1] ~= nil then
 		H.count = H.count + 1
-		position = c.indToPos(index)
+		position = c.colAndRowToPos(index)
 		position.z = 1
 		H.create(position, -1)
 	end

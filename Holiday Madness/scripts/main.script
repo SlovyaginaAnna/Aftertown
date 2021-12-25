@@ -11,7 +11,7 @@ local last_touch = nil
 
 function build_road(self, position)
 	if last_touch == nil then
-		last_touch = c.indToPos(c.index(position))
+		last_touch = c.colAndRowToPos(c.colAndRow(position))
 		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 1), "/selected_cell")
 	else
 		msg.post("/navigator", "add_road", {from = last_touch, to = position})
@@ -52,7 +52,7 @@ function init(self)
 	timer.delay(spawning_home_time, true, add_homes, 0)
 	timer.delay(spawning_shop_time, true, add_shops, 1)
 	-- Init navigator.
-	for i = 1, #(c.coord) do
+	for i = 1, c.columns * c.rows do
 		msg.post("/navigator", "add_cell", {cell = i})
 	end
 end

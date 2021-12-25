@@ -69,8 +69,15 @@ function C.isEmpty(indexes)
 	return empty
 end
 
+function C.isEmptyIndex(index)
+	index = index - 1
+	indexes = {math.floor(index / C.rows) + 1, index % C.rows + 1}
+	empty = C.coord[indexes[1]][indexes[2]].isEmpty
+	return empty
+end
+
 function C.setSmth(position, handle)
-	index = C.index(position)
+	index = C.colAndRow(position)
 	C.coord[index[1]][index[2]].isEmpty = false
 	C.coord[index[1]][index[2]].handle = handle
 end
@@ -107,17 +114,23 @@ end
 function C.index(position)
 	col = (position.x - position.x % C.cell + C.cell) / C.cell
 	r =  (position.y - position.y % C.cell + C.cell) / C.cell
+	return (col - 1) * C.rows + r % (C.rows + 1)
+end
+
+function C.colAndRow(position)
+	col = (position.x - position.x % C.cell + C.cell) / C.cell
+	r =  (position.y - position.y % C.cell + C.cell) / C.cell
 	return {col, r}
 end
 
-function C.indToPos(index) 
+function C.colAndRowToPos(index) 
 	position = vmath.vector3(0, 0, 0)
 	position.x = (index[1] - 1) * C.cell + C.cell / 2
 	position.y = (index[2] - 1) * C.cell + C.cell / 2
 	return position
 end
 
-function C.randIndex()
+function C.randColAndRow()
 	count = 0
 	repeat
 		col = math.random(1, C.columns)
