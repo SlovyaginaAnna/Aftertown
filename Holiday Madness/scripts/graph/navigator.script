@@ -36,32 +36,6 @@ local cell_count = 0
 
 -- Functions.
 
--- Geometry
-function area(a, b, c)
-	return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
-end
-
-function intersect_1(a, b, c, d)
-	if a > b then
-		a, b = b, a
-	end
-	if c > d then
-		c, d = d, c
-	end
-	return math.max(a, c) <= math.min(b, d)
-end
-
-function intersect(road1, road2)
-	local a1 = road1.from.position
-	local b1 = road1.to.position
-	local a2 = road2.from.position
-	local b2 = road2.to.position
-	return intersect_1(a1.x, b1.x, a2.x, b2.x)
-		and intersect_1(a1.y, b1.y, a2.y, b2.y)
-		and area(a1,b1,a2) * area(a1,b1,b2) < 0
-		and area(a2,b2,a1) * area(a2,b2,b1) < 0
-end
-
 function gcd(a, b)
 	if b < 0 then
 		b = -b
@@ -87,14 +61,14 @@ function can_add_road(cell1, cell2)
 	or not c.isEmptyIndex(cell2.number) and c.road_built[cell2.number] then
 		return false
 	end
-	road = Road:new(cell1, cell2, 1, 1)
-	for i = 1, cell_count do
-		for j = 1, cell_count do
-			if roads[i][j] ~= nil and 
-			intersect(road, roads[i][j]) then
-				return false
-			end
-		end
+
+	local x1 = cell1.position.x
+	local x2 = cell2.position.x
+	local y1 = cell1.position.y
+	local y2 = cell2.position.y
+	if roads[c.index(vmath.vector3(x1, y2, 0))][c.index(vmath.vector3(x2, y1, 0))] ~= nil
+	and not (x2 == x1) and not(y2 == y1) then
+		return false
 	end
 	return true
 end
