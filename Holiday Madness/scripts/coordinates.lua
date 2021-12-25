@@ -1,8 +1,19 @@
+<<<<<<< HEAD
 local C ={}
 C.coord	= {}  --таблиа хранящая все клетки 
 C.rows = 17
 C.columns = 18
 C.cell = 48
+=======
+local C = {}
+C.coord	= {}  --таблица, хранящая все клетки 
+C.road_width = {} --таблица, хранящая ширину дороги, которую можно здесь построить
+C.road_built = {} --таблица, хранящая, построена ли на этой клетке дорога (для того, чтобы
+				  -- к одному дому подходила только одна дорога)
+C.rows = 11
+C.columns = 20
+C.cell = 96
+>>>>>>> 9ce0a27718e49433bbd5ff020db48a05c53c96e6
 
 --======================================
 function C.initCoord()
@@ -25,6 +36,8 @@ function C.generate(position)
 		handle = nil
 	}
 	table.insert(C.coord, cStruct)
+	table.insert(C.road_width, 1)
+	table.insert(C.road_built, false)
 end
 
 function C.isEmpty(index)

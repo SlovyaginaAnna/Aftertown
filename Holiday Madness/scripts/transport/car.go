@@ -17,7 +17,7 @@ embedded_components {
   id: "sprite"
   type: "sprite"
   data: "tile_set: \"/scripts/transport/car.atlas\"\n"
-  "default_animation: \"logo_256\"\n"
+  "default_animation: \"CAR_blue\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""

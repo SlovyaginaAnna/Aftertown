@@ -2,6 +2,7 @@
 -- and plots routes for cars.
 
 local c = require "scripts.coordinates"
+local s = require "scripts.shop"
 
 -- Graph
 
@@ -75,6 +76,17 @@ function gcd(a, b)
 end
 
 function can_add_road(cell1, cell2)
+	if cell1.number == cell2.number then
+		return false
+	end
+	if math.abs(cell1.position.x - cell2.position.x) > c.cell
+	or math.abs(cell1.position.y - cell2.position.y) > c.cell then
+		return false
+	end
+	if not c.isEmpty(cell1.number) and c.road_built[cell1.number]
+	or not c.isEmpty(cell2.number) and c.road_built[cell2.number] then
+		return false
+	end
 	road = Road:new(cell1, cell2, 1, 1)
 	for i = 1, cell_count do
 		for j = 1, cell_count do
@@ -87,36 +99,28 @@ function can_add_road(cell1, cell2)
 	return true
 end
 
--- Return built road and nil if it is not possible.
-function add_road(cell1, cell2, width, length)
-	if cell1.number ~= cell2.number then
-		roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
-		roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)
-		cars[cell2.number][cell1.number] = {}
-		cars[cell1.number][cell2.number] = {}
-		return roads[cell1.number][cell2.number]
-	else
-		return nil
-	end
+function add_road(cell1, cell2)
+	width = math.min(c.road_width[cell1.number], c.road_width[cell2.number])
+	length = vmath.length(cell2.position - cell1.position)
+	roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
+	roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)
+	cars[cell2.number][cell1.number] = {}
+	cars[cell1.number][cell2.number] = {}
+	
+	c.road_built[cell1.number] = true
+	c.road_built[cell2.number] = true
+	return roads[cell1.number][cell2.number]
 end
 
 function plan_roads(start, finish, sender)
+	-- Center coordinates.
+	start = c.indToPos(c.index(start))
 	finish = c.indToPos(c.index(finish))
-	local cell1 = {number = c.index(start), position = start}
+	local first_cell = {number = c.index(start), position = start}
 	local last_cell = {number = c.index(finish), position = finish}
-	if can_add_road(cell1, last_cell) then
-		-- TODO: remove magic numbers.
-		local steps = gcd((finish.x - start.x) / 96, (finish.y - start.y) / 96)
-		local step = (finish - start) / steps
-		local next_pos = start + step
-		for i = 1, steps do
-			local cell2 = {number = c.index(next_pos), position = next_pos}
-			-- Add road to navigator.
-			local built_road = add_road(cell1, cell2, 1, vmath.length(next_pos - start))
-			msg.post(sender, "add_road", {road = built_road })
-			cell1 = {number = c.index(next_pos), position = next_pos}
-			next_pos = next_pos + step
-		end
+	if can_add_road(first_cell, last_cell) then
+		local built_road = add_road(first_cell, last_cell)
+		msg.post(sender, "add_road", {road = built_road })
 	end
 end
 
@@ -138,12 +142,13 @@ function remove_car(car, from, to)
 	table.remove(cars[from][to], 1)
 	roads[from][to].cars = roads[from][to].cars - 1
 	for k, other_car in pairs(cars[from][to]) do
+		go.set(other_car, "CarsInFront", go.get(other_car, "CarsInFront") - 1)
 		msg.post(other_car, "go_to", {road = roads[from][to]})
 	end
 end
 
 -- Plot route and return first road of it.
-function first_road(start, finish)
+function first_road(start, finish, color)
 	d = {}
 	p = {}
 	used = {}
@@ -172,21 +177,32 @@ function first_road(start, finish)
 			end
 		end
 	end
-
+	-- Find closet shop if there is no finish specified.
+	if finish == nil then
+		for i = 1, #(s.shops) do
+			if s.shops[i].color == color and (finish == nil or d[c.index(s.shops[i].pos)] < d[finish]) then
+				finish = c.index(s.shops[i].pos)
+			end
+		end
+	end
 	-- Trace back the path.
 	next_cell = finish
-	while p[next_cell] ~= start do
+	while next_cell ~= nil and p[next_cell] ~= start do
 		next_cell = p[next_cell]
 	end
-	return roads[start][next_cell]
+	if (start == finish) then
+		return Road:new(start, finish, 1, 0)
+	elseif (next_cell == nil) then
+		return nil
+	else
+		return roads[start][next_cell]
+	end
 end
 
 -- Object lifecycle.
 
 function init(self)
-	-- Add initialization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+
 end
 
 function final(self)
@@ -196,18 +212,23 @@ function final(self)
 end
 
 function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("road_is_finished") then
 		remove_car(sender, message.from, message.to)
 	elseif message_id == hash("where_next") then
-		next_road = first_road(message.from, message.to)
-		add_car_riding(sender, next_road.from.number, next_road.to.number)
-		msg.post(sender, "go_to", { road = next_road })
+		next_road = first_road(message.from, message.to, message.color)
+		if next_road == nil then
+			msg.post(sender, "wait")
+		elseif next_road.from == next_road.to then
+			msg.post(sender, "done")
+		else
+			add_car_riding(sender, next_road.from.number, next_road.to.number)
+			go.set(sender, "CarsInFront", next_road.cars - 1)
+			msg.post(sender, "go_to", { road = next_road })
+		end
 	elseif message_id == hash("add_cell") then
 		add_cell(message.cell)
 	elseif message_id == hash("add_road") then

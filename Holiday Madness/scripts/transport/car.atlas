@@ -1,5 +1,9 @@
 images {
-  image: "/builtins/assets/images/logo/logo_256.png"
+  image: "/scripts/transport/CAR_blue.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/scripts/transport/CAR_green.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0
