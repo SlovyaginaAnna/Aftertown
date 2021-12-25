@@ -32,7 +32,7 @@ function on_message(self, message_id, message, sender)
 			label.set_text("#label", tonumber(t) + 1)
 			timer.delay(time_in_shop, false, send_home)
 		else
-			msg.post(sender, "denie")
+			msg.post(sender, "deny")
 		end
 	elseif message_id == hash("night") then
 		label.set_text("#label", 0)

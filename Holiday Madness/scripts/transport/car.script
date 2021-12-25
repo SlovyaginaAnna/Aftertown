@@ -69,6 +69,8 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("wait") then
 		timer.delay(1, false, function() where_next(self, self.from) end)
 	elseif message_id == hash("done") then
+		coords = c.colAndRow(go.get_position("."))
+		msg.post(c.coord[coords[1]][coords[2]].handle, "visit")
 		go.delete(".")
 	end
 end
