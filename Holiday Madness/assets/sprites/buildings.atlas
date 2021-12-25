@@ -7,11 +7,11 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/sprites/shop.png"
+  image: "/png files/houses/red.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/sprites/shop1png.png"
+  image: "/png files/houses/green.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0

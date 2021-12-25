@@ -11,7 +11,7 @@ end
 
 function H.addHome()	
 	index = c.randIndex() 
-	if index ~= -1 then
+	if index[1] ~= nil then
 		H.count = H.count + 1
 		position = c.indToPos(index)
 		position.z = 1

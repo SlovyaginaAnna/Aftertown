@@ -5,18 +5,21 @@ S.count = 0
 
 function S.initShops()
 	S.shops = {} 
-	position = c.indToPos(c.randIndex())
-	position.z = 1
-	S.create(position, 0)
-	position = c.indToPos(c.randIndex())
-	position.z = 1
-	S.create(position, 1)
+	for i = 0, 1 do
+		indexes = {}
+		while indexes[1] == nil do
+			indexes = c.randIndex()
+		end
+		position = c.indToPos(indexes)
+		position.z = 1
+		S.create(position, i)
+	end
 	S.count = 2
 end
 
 function S.addShop()
 	index = c.randIndex() 
-	if index ~= -1 then
+	if index ~= {} then
 		S.count = S.count + 1
 		position = c.indToPos(index)
 		position.z = 1

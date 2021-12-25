@@ -2,6 +2,7 @@ local c = require "scripts.coordinates"
 local h = require "scripts.home"
 local s = require "scripts.shop"
 local home_count = 20
+local shop_count = 6
 local spawning_home_time = 10
 local spawning_shop_time = 5
 
