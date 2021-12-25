@@ -21,10 +21,10 @@ function S.initShops()
 end
 
 function S.addShop()
-	index = c.randIndex() 
+	index = c.randColAndRow() 
 	if index ~= {} then
 		S.count = S.count + 1
-		position = c.indToPos(index)
+		position = c.colAndRowToPos(index)
 		position.z = 1
 		S.create(position, -1)
 	end
