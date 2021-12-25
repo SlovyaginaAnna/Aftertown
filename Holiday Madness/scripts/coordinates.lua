@@ -1,8 +1,8 @@
 local C ={}
 C.coord	= {}  --таблиа хранящая все клетки 
-C.rows = 11
-C.columns = 20
-C.cell = 96
+C.rows = 17
+C.columns = 18
+C.cell = 48
 
 --======================================
 function C.initCoord()

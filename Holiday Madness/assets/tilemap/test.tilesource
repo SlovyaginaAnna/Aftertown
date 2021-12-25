@@ -1,6 +1,6 @@
-image: "/assets/tilemap/TILEMAP.png"
-tile_width: 96
-tile_height: 96
+image: "/png files/map/the map.png"
+tile_width: 48
+tile_height: 48
 tile_margin: 0
 tile_spacing: 0
 collision: ""

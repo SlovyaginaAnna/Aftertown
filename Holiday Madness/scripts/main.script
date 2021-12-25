@@ -1,12 +1,9 @@
 local c = require "scripts.coordinates"
 local h = require "scripts.home"
 local s = require "scripts.shop"
-local home_count = 10
+local home_count = 20
 local spawning_home_time = 1
 local spawning_shop_time = 5
-local shop_count = 6
-local day_time = 5
-local night_time = 3
 
 -- Position of last touch.
 local last_touch = nil
@@ -50,7 +47,6 @@ function init(self)
 	for i = 1, #(c.coord) do
 		msg.post("/navigator", "add_cell", {cell = i})
 	end
-	day()
 end
 
 function final(self)
@@ -95,14 +91,4 @@ end
 
 add_shops = function()
 	s.addShop()
-end
-
-day = function()
-	msg.post("/navigator", "day")
-	timer.delay(day_time, false, night)
-end
-
-night = function()
-	msg.post("/navigator", "send_home")
-	timer.delay(night_time, false, day)
 end
