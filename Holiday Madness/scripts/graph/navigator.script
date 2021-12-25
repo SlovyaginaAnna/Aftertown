@@ -24,7 +24,7 @@ end
 
 -- How much time will a car spend on a given road.
 function time_on_road(road)
-	return road.length * math.max((road.cars + 1) / road.width, 1)
+	return road.length * math.max(math.pow(road.cars + 1, 2) / road.width, 1)
 end
 
 local roads = {}

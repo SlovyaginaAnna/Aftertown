@@ -13,7 +13,7 @@ function time_on_road_left(self, road)
 	local delta = vmath.length(go.get_position(".") - road.to.position)
 	local full_path = vmath.length( road.to.position - road.from.position)
 	local done = delta / full_path
-	return done * road.length * math.max((self.CarsInFront + 1) / road.width, 1) / 100
+	return done * road.length * math.max(math.pow(self.CarsInFront + 1, 2) / road.width, 1) / 100
 end
 
 -- Drive on the given road.

@@ -3,12 +3,12 @@ local h = require "scripts.home"
 local s = require "scripts.shop"
 local home_count = 6
 local shop_count = 4
-local spawning_home_time = 2
-local spawning_shop_time = 4
+local spawning_home_time = 20
+local spawning_shop_time = 40
 home_timer = nil
 shop_timer = nil
 delete_roads = false
-game_time = 20
+game_time = 300
 
 -- Position of last touch.
 local last_touch = nil
@@ -52,6 +52,8 @@ function init(self)
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 	math.randomseed(os.time())
 	c.initCoord()
+	s.initShops()
+	h.initHomes()
 	set_widths(self)
 	-- Init navigator.
 	for i = 1, c.columns * c.rows do
@@ -90,7 +92,7 @@ function on_input(self, action_id, action)
 	if action_id == hash("touch") and action.pressed and not delete_roads then
 		local position = vmath.vector3(action.x, action.y, 0)
 		build_road(self, position)
-	elseif action_id == hash("touch") and delete_roads then
+	elseif action_id == hash("touch") and action.pressed then
 		position = vmath.vector3(action.x, action.y, 0)
 		indexes = c.index(position)
 		msg.post("/navigator", "delete_road", {indexes})
@@ -104,8 +106,6 @@ function on_reload(self)
 end
 
 function start_game()
-	s.initShops()
-	h.initHomes()
 	home_timer = timer.delay(spawning_home_time, true, add_homes)
 	shop_timer = timer.delay(spawning_shop_time, true, add_shops)
 	timer.delay(game_time, false, end_game)

@@ -14,3 +14,6 @@ input_method = HiddenInputField
 [project]
 title = Holiday Madness
 
+[sprite]
+max_count = 512
+
