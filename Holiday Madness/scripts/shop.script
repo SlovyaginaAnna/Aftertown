@@ -1,8 +1,10 @@
 local visitors = 0
 local visitors_table = {}
 local max_number = 10
+local time_in_shop = 10
 
 function init(self)
+	label.set_text("#label", 0)
 	visitors = 0
 	visitors_table = {}
 	max_number = 10
@@ -26,9 +28,15 @@ function on_message(self, message_id, message, sender)
 			visitors = visitors + 1
 			table.insert(visitors_table, sender)
 			msg.post(sender, "accept")
+			t = label.get_text("#label")
+			label.set_text("#label", tonumber(t) + 1)
+			timer.delay(time_in_shop, false, send_home)
 		else
 			msg.post(sender, "denie")
 		end
+	elseif message_id == hash("night") then
+		label.set_text("#label", 0)
+	end
 end
 
 function on_input(self, action_id, action)
@@ -47,4 +55,11 @@ function on_reload(self)
 	-- Add reload-handling code here
 	-- Learn more: https://defold.com/manuals/hot-reload/
 	-- Remove this function if not needed
+end
+
+send_home = function(url)
+	msg.post(url, "send_home")
+	table.remove(visitors_table, url)
+	t = label.get_text("#label")
+	label.set_text("#label", tonumber(t) - 1)
 end

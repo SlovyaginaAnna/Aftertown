@@ -4,8 +4,8 @@ C.coord	= {}  --таблица, хранящая все клетки
 C.road_width = {} --таблица, хранящая ширину дороги, которую можно здесь построить
 C.road_built = {} --таблица, хранящая, построена ли на этой клетке дорога (для того, чтобы
 				  -- к одному дому подходила только одна дорога)
-C.rows = 17
-C.columns = 18
+C.rows = 18
+C.columns = 19
 C.cell = 48
 -->>>>>>> 9ce0a27718e49433bbd5ff020db48a05c53c96e6
 
@@ -22,6 +22,7 @@ function C.initCoord()
 		end
 		table.insert(C.coord, tab)
 	end
+	C.setEnableCells()
 end
 
 function C.generate(position, tab)	
@@ -34,6 +35,33 @@ function C.generate(position, tab)
 	table.insert(tab, cStruct)
 	table.insert(C.road_width, 1)
 	table.insert(C.road_built, false)
+end
+
+function C.setEnableCells()
+	C.enableCells(1, C.columns, 0, 1)
+	C.enableCells(1, C.rows, 1, 0)
+	C.enableCells(8, C.rows, 2, 0)
+	C.enableCells(8, C.rows, 3, 0)
+	C.enableCells(4, 14, 0, 18)
+	C.enableCells(12, 17, 4, 0)
+	C.enableCells(8, 15, 0, 2)
+	C.enableCells(11, 15, 0, 3)
+	C.enableCells(13, 18, 19, 0)
+	for i = 10, 12 do
+		C.enableCells(15, 17, i, 0)
+	end
+end
+
+function C.enableCells(first, second, i, j)
+	if i == 0 then
+		for k = first, second do
+			C.coord[k][j].isEmpty = false
+		end
+	else 
+		for k = first, second do
+			C.coord[i][k].isEmpty = false
+		end
+	end
 end
 
 function C.isEmpty(indexes)

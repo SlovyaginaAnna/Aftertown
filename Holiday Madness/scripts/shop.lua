@@ -2,6 +2,8 @@ local c = require "scripts.coordinates"
 local S ={}
 S.shops	= {}  --таблиа хранящая все магазины
 S.count = 0
+daytime = 60
+nighttime = 20
 
 function S.initShops()
 	S.shops = {} 
@@ -15,6 +17,7 @@ function S.initShops()
 		S.create(position, i)
 	end
 	S.count = 2
+	day()
 end
 
 function S.addShop()
@@ -45,6 +48,19 @@ function S.create(position, varient)
 	c.setSmth(position, obj)
 	table.insert(S.shops, hStruct)
 	msg.post("/go#main", "check_shop_timer")
+end
+
+day = function()
+	msg.post("/navigator", "day")
+	timer.delay(daytime, false, night)
+end
+
+night = function()
+	msg.post("/navigator", "night")
+	for i = 1, #S.shops do
+		msg.post(S.shops[i].url, "night")
+	end
+	timer.delay(nighttime, false, day)
 end
 
 return S

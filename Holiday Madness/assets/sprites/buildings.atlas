@@ -1,17 +1,17 @@
 images {
-  image: "/assets/sprites/home.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
-  image: "/assets/sprites/home1.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
   image: "/png files/houses/red.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/png files/houses/green.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/png files/houses/House1.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/png files/houses/House 2.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0
