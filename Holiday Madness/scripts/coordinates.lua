@@ -64,6 +64,10 @@ function C.enableCells(first, second, i, j)
 	end
 end
 
+function C.isBlocked(indexes)
+	return (not C.isEmpty(indexes) and C.coord[indexes[1]][indexes[2]].handle == nil)
+end
+
 function C.isEmpty(indexes)
 	empty = C.coord[indexes[1]][indexes[2]].isEmpty
 	return empty

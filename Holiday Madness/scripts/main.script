@@ -10,13 +10,15 @@ local spawning_shop_time = 5
 local last_touch = nil
 
 function build_road(self, position)
-	if last_touch == nil then
-		last_touch = c.colAndRowToPos(c.colAndRow(position))
-		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 1), "/selected_cell")
-	else
-		msg.post("/navigator", "add_road", {from = last_touch, to = position})
-		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
-		last_touch = nil
+	if not c.isBlocked(c.colAndRow(position)) then
+		if last_touch == nil then
+			last_touch = c.colAndRowToPos(c.colAndRow(position))
+			go.set_position(vmath.vector3(last_touch.x, last_touch.y, 1), "/selected_cell")
+		else
+			msg.post("/navigator", "add_road", {from = last_touch, to = position})
+			go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
+			last_touch = nil
+		end
 	end
 end
 
