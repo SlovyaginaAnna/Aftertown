@@ -170,7 +170,10 @@ function first_road(start, finish, color)
 	-- Find closet shop if there is no finish specified.
 	if finish == nil then
 		for i = 1, #(s.shops) do
-			if s.shops[i].color == color and (finish == nil or d[c.index(s.shops[i].pos)] < d[finish]) then
+			local script_url = msg.url(s.shops[i].url)
+			script_url.fragment = "shop"
+			if go.get(script_url, "Visitors") < 10
+			and s.shops[i].color == color and (finish == nil or d[c.index(s.shops[i].pos)] < d[finish]) then
 				finish = c.index(s.shops[i].pos)
 			end
 		end

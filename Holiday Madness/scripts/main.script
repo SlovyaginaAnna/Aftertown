@@ -117,14 +117,14 @@ end_game = function()
 end
 
 add_homes = function()
-	if h.count + 1 < home_count then
+	if h.count + 1 <= home_count then
 		h.addHome()
 		timer.delay(spawning_home_time, false, add_homes)
 	end
 end
 
 add_shops = function()
-	if s.count + 1 < shop_count then
+	if s.count + 1 <= shop_count then
 		s.addShop()
 		timer.delay(spawning_shop_time, false, add_shops)
 	end

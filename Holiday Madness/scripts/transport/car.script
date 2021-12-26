@@ -13,7 +13,7 @@ function time_on_road_left(self, road)
 	local delta = vmath.length(go.get_position(".") - road.to.position)
 	local full_path = vmath.length( road.to.position - road.from.position)
 	local done = delta / full_path
-	return done * road.length * math.max(math.pow(self.CarsInFront + 1, 2) / road.width, 1) / 100
+	return done * road.length * math.max(math.pow(self.CarsInFront + 1, 2) / road.width, 1) / 50
 end
 
 -- Drive on the given road.
@@ -67,11 +67,14 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("go_to") then
 		drive(self, message.road)
 	elseif message_id == hash("wait") then
-		timer.delay(1, false, function() where_next(self, self.from) end)
+		timer.delay(1, false, function() where_next(self, c.index(go.get_position("."))) end)
 	elseif message_id == hash("done") then
 		coords = c.colAndRow(go.get_position("."))
 		msg.post(c.coord[coords[1]][coords[2]].handle, "visit")
+	elseif message_id == hash("accept") then
 		go.delete(".")
+	elseif message_id == hash("deny") then
+		where_next(self, c.index(go.get_position(".")))
 	end
 end
 
