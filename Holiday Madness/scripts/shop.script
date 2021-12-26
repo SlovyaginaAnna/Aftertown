@@ -28,6 +28,7 @@ function on_message(self, message_id, message, sender)
 			table.insert(visitors_table, sender)
 			msg.post(sender, "accept")
 			label.set_text("#label", self.Visitors)
+			msg.post("/gui", "recieve_gift")
 			timer.delay(time_in_shop, false, function() send_home(self) end)
 		else
 			msg.post(sender, "deny")

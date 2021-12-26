@@ -1,3 +1,5 @@
+gifts_recieved = 0
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 end
@@ -19,7 +21,10 @@ function on_message(self, message_id, message, sender)
 		local background = gui.get_node("box")
 		gui.set_enabled(background, true)
 		end_text = gui.get_node("text")
-		gui.set_text(end_text, "Congratulations!")
+		local count = gifts_recieved
+		gui.set_text(end_text, "Congratulations!\n" .. tostring(count) .. " people\n recieved\n Christmas presents")
+	elseif message_id == hash("recieve_gift") then
+		gifts_recieved = gifts_recieved + 1
 	end
 		
 end
