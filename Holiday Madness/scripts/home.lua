@@ -11,7 +11,7 @@ end
 
 function H.addHome()	
 	index = c.randColAndRow() 
-	if index[1] ~= nil then
+	if index ~= nil then
 		H.count = H.count + 1
 		position = c.colAndRowToPos(index)
 		position.z = 1
@@ -35,7 +35,6 @@ function H.create(position, varient)
 	}
 	c.setSmth(position, obj)
 	table.insert(H.homes, hStruct)
-	msg.post("/go#main", "check_home_timer")
 end
 
 return H

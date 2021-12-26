@@ -142,7 +142,7 @@ function C.randColAndRow()
 		count = count + 1
 	until(C.isEmpty({col, r}) and C.suitable({col, r}) or count == 20) 
 	if count == 20 then
-		return {}
+		return nil
 	else 
 		return {col, r}
 	end

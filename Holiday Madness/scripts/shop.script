@@ -1,11 +1,11 @@
-local visitors = 0
+go.property("visitors", 0)
 local visitors_table = {}
 local max_number = 5
 local time_in_shop = 10
 
 function init(self)
 	label.set_text("#label", 0)
-	visitors = 0
+	self.visitors = 0
 	visitors_table = {}
 	max_number = 10
 end
@@ -24,17 +24,17 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("visit") then
-		if visitors < max_number then 
-			visitors = visitors + 1
+		if self.visitors < max_number then 
+			self.visitors = self.visitors + 1
 			table.insert(visitors_table, sender)
 			msg.post(sender, "accept")
-			label.set_text("#label", visitors)
+			label.set_text("#label", self.visitors)
 			timer.delay(time_in_shop, false, send_home)
 		else
 			msg.post(sender, "deny")
 		end
 	elseif message_id == hash("night") then
-		visitors = 0
+		self.visitors = 0
 		label.set_text("#label", 0)
 	end
 end
@@ -60,6 +60,6 @@ end
 send_home = function()
 	msg.post("/navigator", "send_home")
 	table.remove(visitors_table, 1)
-	visitors = visitors - 1
-	label.set_text("#label", visitors)
+	--self.visitors = self.visitors - 1
+	--label.set_text("#label", self.visitors)
 end

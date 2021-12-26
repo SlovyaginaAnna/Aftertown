@@ -3,10 +3,8 @@ local h = require "scripts.home"
 local s = require "scripts.shop"
 local home_count = 6
 local shop_count = 4
-local spawning_home_time = 20
-local spawning_shop_time = 40
-home_timer = nil
-shop_timer = nil
+local spawning_home_time = 15
+local spawning_shop_time = 30
 delete_roads = false
 game_time = 300
 
@@ -14,6 +12,19 @@ game_time = 300
 local last_touch = nil
 
 function build_road(self, position)
+	if not c.isBlocked(c.colAndRow(position)) then
+		if last_touch == nil then
+			last_touch = c.colAndRowToPos(c.colAndRow(position))
+			go.set_position(vmath.vector3(last_touch.x, last_touch.y, 1), "/selected_cell")
+		else
+			msg.post("/navigator", "add_road", {from = last_touch, to = position})
+			go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
+			last_touch = nil
+		end
+	end
+end
+
+function delete_road(self, position)
 	if not c.isBlocked(c.colAndRow(position)) then
 		if last_touch == nil then
 			last_touch = c.colAndRowToPos(c.colAndRow(position))
@@ -71,15 +82,7 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("check_home_timer") then
-		if h.count >= home_count then
-			timer.cancel(home_timer)
-		end
-	elseif message_id == hash("check_shop_timer") then
-		if s.count >= shop_count then
-			timer.cancel(shop_timer)
-		end
-	elseif message_id == hash("add_road") then
+	if message_id == hash("add_road") then
 		draw_road(self, message.road)
 	elseif message_id == hash("delete_button") then
 		delete_roads = not delete_roads
@@ -106,8 +109,8 @@ function on_reload(self)
 end
 
 function start_game()
-	home_timer = timer.delay(spawning_home_time, true, add_homes)
-	shop_timer = timer.delay(spawning_shop_time, true, add_shops)
+	timer.delay(spawning_home_time, false, add_homes)
+	timer.delay(spawning_shop_time, false, add_shops)
 	timer.delay(game_time, false, end_game)
 end
 
@@ -116,9 +119,15 @@ end_game = function()
 end
 
 add_homes = function()
-	h.addHome()
+	if h.count + 1 < home_count then
+		h.addHome()
+		timer.delay(spawning_home_time, false, add_homes)
+	end
 end
 
 add_shops = function()
-	s.addShop()
+	if s.count + 1 < shop_count then
+		s.addShop()
+		timer.delay(spawning_shop_time, false, add_shops)
+	end
 end

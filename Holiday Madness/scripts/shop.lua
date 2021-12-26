@@ -8,8 +8,8 @@ nighttime = 20
 function S.initShops()
 	S.shops = {} 
 	for i = 0, 1 do
-		indexes = {}
-		while indexes[1] == nil do
+		indexes = nil
+		while indexes == nil do
 			indexes = c.randColAndRow()
 		end
 		position = c.colAndRowToPos(indexes)
@@ -22,7 +22,7 @@ end
 
 function S.addShop()
 	index = c.randColAndRow() 
-	if index ~= {} then
+	if index ~= nil then
 		S.count = S.count + 1
 		position = c.colAndRowToPos(index)
 		position.z = 1
@@ -47,7 +47,6 @@ function S.create(position, varient)
 	}
 	c.setSmth(position, obj)
 	table.insert(S.shops, hStruct)
-	msg.post("/go#main", "check_shop_timer")
 end
 
 day = function()

@@ -50,14 +50,14 @@ function gcd(a, b)
 end
 
 function can_add_road(cell1, cell2)
-	if cell1.number == cell2.number then
+	if roads[cell1.number][cell2.number] ~= nil then
 		return false
-	end
-	if math.abs(cell1.position.x - cell2.position.x) >  c.cell
+	elseif cell1.number == cell2.number then
+		return false
+	elseif math.abs(cell1.position.x - cell2.position.x) >  c.cell
 	or math.abs(cell1.position.y - cell2.position.y) >  c.cell then
 		return false
-	end
-	if not c.isEmptyIndex(cell1.number) and c.road_built[cell1.number]
+	elseif not c.isEmptyIndex(cell1.number) and c.road_built[cell1.number]
 	or not c.isEmptyIndex(cell2.number) and c.road_built[cell2.number] then
 		return false
 	end
