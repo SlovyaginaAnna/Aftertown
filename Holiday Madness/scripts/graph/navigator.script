@@ -98,6 +98,22 @@ function plan_roads(start, finish, sender)
 	end
 end
 
+function remove_road(start, finish)
+	start = c.colAndRowToPos(c.colAndRow(start))
+	finish = c.colAndRowToPos(c.colAndRow(finish))
+	local first_cell = {number = c.index(start), position = start}
+	local last_cell = {number = c.index(finish), position = finish}
+	c.road_built[first_cell.number] = false
+	c.road_built[last_cell.number] = false
+	if roads[first_cell.number][last_cell.number] ~= nil then
+		if roads[first_cell.number][last_cell.number].url ~= nil then
+			go.delete(roads[first_cell.number][last_cell.number].url)
+		end
+	end
+	roads[first_cell.number][last_cell.number] = nil
+	roads[last_cell.number][first_cell.number] = nil
+end
+
 function add_cell(cell)
 	roads[cell] = {}
 	cars[cell] = {}
@@ -207,6 +223,11 @@ function on_message(self, message_id, message, sender)
 		add_cell(message.cell)
 	elseif message_id == hash("add_road") then
 		plan_roads(message.from, message.to, sender)
+	elseif message_id == hash("delete_road") then
+		remove_road(message.from, message.to)
+	elseif message_id == hash("add_road_url") then
+		roads[message.road.from.number][message.road.to.number].url = message.url
+		roads[message.road.to.number][message.road.from.number].url = message.url
 	end
 end
 

@@ -25,21 +25,19 @@ function build_road(self, position)
 end
 
 function delete_road(self, position)
-	if not c.isBlocked(c.colAndRow(position)) then
-		if last_touch == nil then
-			last_touch = c.colAndRowToPos(c.colAndRow(position))
-			go.set_position(vmath.vector3(last_touch.x, last_touch.y, 1), "/selected_cell")
-		else
-			msg.post("/navigator", "add_road", {from = last_touch, to = position})
-			go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
-			last_touch = nil
-		end
+	if last_touch == nil then
+		last_touch = c.colAndRowToPos(c.colAndRow(position))
+		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 1), "/selected_cell")
+	else
+		msg.post("/navigator", "delete_road", {from = last_touch, to = position})
+		go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
+		last_touch = nil
 	end
 end
 
-function draw_road(self, road)
-	local start = road.from.position
-	local finish = road.to.position
+function draw_road(self, road_struct)
+	local start = road_struct.from.position
+	local finish = road_struct.to.position
 
 	local road = factory.create("/roads#factory", start)
 	go.set(road, "scale.x", vmath.length(finish - start)/1080)
@@ -50,6 +48,7 @@ function draw_road(self, road)
 	go.set_rotation(rotation, road)
 	local position = vmath.vector3((start + direction).x, (start + direction).y, 0.6)
 	go.set_position(position, road)
+	msg.post("/navigator", "add_road_url", {road = road_struct, url = road})
 end
 
 function set_widths(self)
@@ -96,9 +95,8 @@ function on_input(self, action_id, action)
 		local position = vmath.vector3(action.x, action.y, 0)
 		build_road(self, position)
 	elseif action_id == hash("touch") and action.pressed then
-		position = vmath.vector3(action.x, action.y, 0)
-		indexes = c.index(position)
-		msg.post("/navigator", "delete_road", {indexes})
+		local position = vmath.vector3(action.x, action.y, 0)
+		delete_road(self, position)
 	end
 end
 
