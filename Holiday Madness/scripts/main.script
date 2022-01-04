@@ -6,7 +6,7 @@ local shop_count = 4
 local spawning_home_time = 15
 local spawning_shop_time = 30
 delete_roads = false
-game_time = 30
+game_time = 180
 
 -- Position of last touch.
 local last_touch = nil
