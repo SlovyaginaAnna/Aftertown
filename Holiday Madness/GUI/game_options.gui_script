@@ -2,6 +2,7 @@ gifts_recieved = 0
 grid = nil
 grid_button = nil
 set_grid = nil
+local time_before_end = 0
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
@@ -10,22 +11,21 @@ function init(self)
 	gui.set_enabled(grid, false)
 	gui.set_enabled(grid_button, false)
 	set_grid = false
+	time_text = gui.get_node("time_text")
+	gui.set_enabled(time_text, false)
+	time_before_end = game_time
 end
 
 function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
 end
 
 function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("end") then
+		timer.cancel(0)
+		gui.set_enabled(time_text, false)
 		gui.set_enabled(grid, false)
 		gui.set_enabled(grid_button, false)
 		local background = gui.get_node("box")
@@ -51,6 +51,9 @@ function on_input(self, action_id, action)
 			gui.set_enabled(background, false)
 			msg.post("/go#main", "start")
 			gui.set_enabled(grid_button, true)
+			gui.set_enabled(time_text, true)
+			change_time()
+			timer.delay(1, true, change_time, 0)
 		elseif gui.pick_node(grid_button, action.x, action.y) then
 			set_grid = not set_grid
 			gui.set_enabled(grid, set_grid)
@@ -62,4 +65,18 @@ function on_reload(self)
 	-- Add reload-handling code here
 	-- Learn more: https://defold.com/manuals/hot-reload/
 	-- Remove this function if not needed
+end
+
+change_time = function()
+	time_before_end = time_before_end - 1
+	local time_string = ""
+	if (time_before_end - time_before_end % 60) / 60 < 10 then
+		time_string = time_string .. "0"
+	end
+	time_string = time_string .. tostring((time_before_end - time_before_end % 60) / 60) .. ":"
+	if time_before_end % 60 < 10 then
+		time_string = time_string .. "0"
+	end
+	time_string = time_string .. tostring(time_before_end % 60)
+	gui.set_text(time_text, time_string)
 end

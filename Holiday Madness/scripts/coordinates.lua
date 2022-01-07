@@ -65,12 +65,20 @@ function C.enableCells(first, second, i, j)
 end
 
 function C.isBlocked(indexes)
-	return (not C.isEmpty(indexes) and C.coord[indexes[1]][indexes[2]].handle == nil)
+	if indexes[1] > C.columns or indexes[2] > C.rows then
+		return true
+	else
+		return (not C.isEmpty(indexes) and C.coord[indexes[1]][indexes[2]].handle == nil)
+	end
 end
 
 function C.isEmpty(indexes)
-	empty = C.coord[indexes[1]][indexes[2]].isEmpty
-	return empty
+	if indexes[1] > C.columns or indexes[2] > C.rows then
+		return false
+	else
+		empty = C.coord[indexes[1]][indexes[2]].isEmpty
+		return empty
+	end
 end
 
 function C.isEmptyIndex(index)

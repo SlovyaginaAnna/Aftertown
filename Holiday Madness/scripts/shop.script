@@ -23,7 +23,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("visit") then
-		if self.Visitors < max_number then 
+		if self.Visitors < max_number and day_time then 
 			self.Visitors = self.Visitors + 1
 			table.insert(visitors_table, sender)
 			msg.post(sender, "accept")
@@ -60,6 +60,8 @@ end
 function send_home(self)
 	msg.post("/navigator", "send_home")
 	table.remove(visitors_table, 1)
-	self.Visitors = self.Visitors - 1
+	if self.Visitors > 0 then
+		self.Visitors = self.Visitors - 1
+	end
 	label.set_text("#label", self.Visitors)
 end
