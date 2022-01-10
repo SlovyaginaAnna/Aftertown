@@ -1,7 +1,6 @@
 --<<<<<<< HEAD
 local C = {}
 C.coord	= {}  --таблица, хранящая все клетки 
-C.road_width = {} --таблица, хранящая ширину дороги, которую можно здесь построить
 C.road_built = {} --таблица, хранящая, построена ли на этой клетке дорога (для того, чтобы
 				  -- к одному дому подходила только одна дорога)
 C.rows = 18
@@ -23,6 +22,7 @@ function C.initCoord()
 		table.insert(C.coord, tab)
 	end
 	C.setEnableCells()
+	C.setWidths()
 end
 
 function C.generate(position, tab)	
@@ -30,11 +30,19 @@ function C.generate(position, tab)
 	local cStruct = {
 		isEmpty = true,
 		center 	= position,
+		width = 1,
 		handle = nil
 	}
 	table.insert(tab, cStruct)
-	table.insert(C.road_width, 1)
 	table.insert(C.road_built, false)
+end
+
+function C.setWidths()
+	C.setWidth(1, 14, 5, 0, 2)
+	C.setWidth(1, 14, 6, 0, 2)
+	C.setWidth(10, 14, 9, 0, 2)
+	C.setWidth(10, 14, 10, 0, 2)
+	C.setWidth(10, 14, 11, 0, 2)
 end
 
 function C.setEnableCells()
@@ -50,6 +58,24 @@ function C.setEnableCells()
 	for i = 10, 12 do
 		C.enableCells(15, 17, i, 0)
 	end
+end
+
+function C.setWidth(first, second, i, j, width)
+	if i == 0 then
+		for k = first, second do
+			C.coord[k][j].width = width
+		end
+	else 
+		for k = first, second do
+			C.coord[i][k].width = width
+		end
+	end
+end
+
+function C.getWidth(road_number)
+	index = road_number - 1
+	indexes = {math.floor(index / C.rows) + 1, index % C.rows + 1}
+	return C.coord[indexes[1]][indexes[2]].width
 end
 
 function C.enableCells(first, second, i, j)

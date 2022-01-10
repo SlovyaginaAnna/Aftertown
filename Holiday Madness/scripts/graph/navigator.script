@@ -74,7 +74,7 @@ function can_add_road(cell1, cell2)
 end
 
 function add_road(cell1, cell2)
-	width = math.min(c.road_width[cell1.number], c.road_width[cell2.number])
+	width = math.min(c.getWidth(cell1.number), c.getWidth(cell2.number))
 	length = vmath.length(cell2.position - cell1.position)
 	roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
 	roads[cell2.number][cell1.number] = Road:new(cell2, cell1, width, length)

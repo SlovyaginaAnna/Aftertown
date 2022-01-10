@@ -41,7 +41,7 @@ function draw_road(self, road_struct)
 
 	local road = factory.create("/roads#factory", start)
 	go.set(road, "scale.x", vmath.length(finish - start)/1080)
-	go.set(road, "scale.y", 1/80)
+	go.set(road, "scale.y", road_struct.width/100)
 
 	local direction = (finish - start) / 2
 	local rotation = vmath.quat_rotation_z(math.atan2(direction.y, direction.x))
@@ -51,12 +51,6 @@ function draw_road(self, road_struct)
 	msg.post("/navigator", "add_road_url", {road = road_struct, url = road})
 end
 
-function set_widths(self)
-	for i = 1, #(c.coord) do
-		c.road_width[i] = 1
-	end
-end
-
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
@@ -64,7 +58,6 @@ function init(self)
 	c.initCoord()
 	s.initShops()
 	h.initHomes()
-	set_widths(self)
 	-- Init navigator.
 	for i = 1, c.columns * c.rows do
 		msg.post("/navigator", "add_cell", {cell = i})
