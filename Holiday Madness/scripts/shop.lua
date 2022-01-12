@@ -2,8 +2,8 @@ local c = require "scripts.coordinates"
 local S ={}
 S.shops	= {}  --таблиа хранящая все магазины
 S.count = 0
-daytime = 20
-nighttime = 10
+daytime = 200
+nighttime = 100
 day_time = true
 
 function S.initShops()
