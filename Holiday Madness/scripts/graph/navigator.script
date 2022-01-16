@@ -192,6 +192,34 @@ function first_road(start, finish, color)
 	end
 end
 
+function is_intersection(index)
+	local count = 0
+	for _ in pairs(roads[index]) do 
+		count = count + 1 
+	end
+	return count > 2
+end
+
+function is_busy_vertical(index)
+	local count = 0
+	for e, road in pairs(roads[index]) do 
+		if road.from.position.x == road.to.position.x then
+			count = count + road.cars
+		end
+	end
+	return count > 0
+end
+
+function is_busy_horizontal(index)
+	local count = 0
+	for e, road in pairs(roads[index]) do 
+		if road.from.position.y == road.to.position.y then
+			count = count + road.cars
+		end
+	end
+	return count > 0
+end
+
 -- Object lifecycle.
 
 function init(self)
@@ -211,6 +239,20 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("road_is_finished") then
 		remove_car(sender, message.from, message.to)
+	elseif message_id == hash("intersection") then
+		if message.road.to.position.y == message.road.from.position.y then
+			if is_busy_vertical(message.road.to.number) then
+				msg.post(sender, "wait_on_intersection", {road = message.road})
+			else
+				msg.post(sender, "enter_intersection", {road = message.road})
+			end
+		else
+			if is_busy_horizontal(message.road.to.number) then
+				msg.post(sender, "wait_on_intersection", {road = message.road})
+			else
+				msg.post(sender, "enter_intersection", {road = message.road})
+			end
+		end
 	elseif message_id == hash("where_next") then
 		next_road = first_road(message.from, message.to, message.color)
 		if next_road == nil then
@@ -220,7 +262,7 @@ function on_message(self, message_id, message, sender)
 		else
 			add_car_riding(sender, next_road.from.number, next_road.to.number)
 			go.set(sender, "CarsInFront", next_road.cars - 1)
-			msg.post(sender, "go_to", { road = next_road })
+			msg.post(sender, "go_to", { road = next_road, from_intersection = is_intersection(next_road.from.number), to_intersection = is_intersection(next_road.to.number) })
 		end
 	elseif message_id == hash("add_cell") then
 		add_cell(message.cell)
