@@ -65,7 +65,7 @@ embedded_components {
   id: "sprite"
   type: "sprite"
   data: "tile_set: \"/assets/sprites/buildings.atlas\"\n"
-  "default_animation: \"red\"\n"
+  "default_animation: \"red_shop1\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
@@ -85,8 +85,8 @@ embedded_components {
   id: "label"
   type: "label"
   data: "size {\n"
-  "  x: 24.0\n"
-  "  y: 24.0\n"
+  "  x: 48.0\n"
+  "  y: 48.0\n"
   "  z: 0.0\n"
   "  w: 0.0\n"
   "}\n"
@@ -97,9 +97,9 @@ embedded_components {
   "  w: 0.0\n"
   "}\n"
   "color {\n"
-  "  x: 0.9019608\n"
-  "  y: 0.3019608\n"
-  "  z: 0.3019608\n"
+  "  x: 1.0\n"
+  "  y: 1.0\n"
+  "  z: 1.0\n"
   "  w: 1.0\n"
   "}\n"
   "outline {\n"
@@ -126,8 +126,8 @@ embedded_components {
   "material: \"/builtins/fonts/label.material\"\n"
   ""
   position {
-    x: 1.0
-    y: 16.0
+    x: -21.0
+    y: -17.0
     z: 0.1
   }
   rotation {

@@ -7,17 +7,6 @@ nighttime = 100
 day_time = true
 
 function S.initShops()
-	S.shops = {} 
-	for i = 0, 1 do
-		indexes = nil
-		while indexes == nil do
-			indexes = c.randColAndRow()
-		end
-		position = c.colAndRowToPos(indexes)
-		position.z = 1
-		S.create(position, i)
-	end
-	S.count = 2
 	day()
 end
 

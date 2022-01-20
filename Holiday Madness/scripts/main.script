@@ -1,10 +1,6 @@
 local c = require "scripts.coordinates"
 local h = require "scripts.home"
 local s = require "scripts.shop"
-local home_count = 6
-local shop_count = 4
-local spawning_home_time = 15
-local spawning_shop_time = 30
 delete_roads = false
 game_time = 180
 
@@ -100,25 +96,9 @@ function on_reload(self)
 end
 
 function start_game()
-	timer.delay(spawning_home_time, false, add_homes)
-	timer.delay(spawning_shop_time, false, add_shops)
 	timer.delay(game_time, false, end_game)
 end
 
 end_game = function()
 	msg.post("/gui", "end")
-end
-
-add_homes = function()
-	if h.count + 1 <= home_count then
-		h.addHome()
-		timer.delay(spawning_home_time, false, add_homes)
-	end
-end
-
-add_shops = function()
-	if s.count + 1 <= shop_count then
-		s.addShop()
-		timer.delay(spawning_shop_time, false, add_shops)
-	end
 end
