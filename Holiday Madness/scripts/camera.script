@@ -1,5 +1,8 @@
+local pos = nil
+
 function init(self)
 	msg.post("#camera", "acquire_camera_focus")
+	msg.post(".", "acquire_input_focus")
 end
 
 function final(self)
@@ -22,15 +25,28 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
+	if action_id == hash("scroll_down") then
+		msg.post("@render:", "use_fixed_projection", { zoom = 2, near = -1, far = 1 })
+	elseif action_id == hash("scroll_up") then
+		msg.post("@render:", "use_fixed_projection", { zoom = 1, near = -1, far = 1 })
+	elseif action_id == hash("scroll") and not action.pressed then
+		current_pos = go.get_position("/camera#camera")
+		if pos.x < action.x then
+			current_pos.x = current_pos.x - (action.x - pos.x)
+		else
+			current_pos.x = current_pos.x +  (pos.x - action.x)
+		end
+		if pos.y < action.y then
+			current_pos.y = current_pos.y - (action.y - pos.y)
+		else
+			current_pos.y = current_pos.y + (pos.y - action.y)
+		end
+		pos.x = action.x
+		pos.y = action.y
+		go.set_position(current_pos, "/camera#camera")
+	elseif action_id == hash("scroll") and action.pressed then
+		pos = vmath.vector3(action.x, action.y, 2)
+	end
 end
 
 function on_reload(self)
