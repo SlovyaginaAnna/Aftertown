@@ -1,8 +1,16 @@
 local pos = nil
+local WIDTH
+local HEIGHT
+local map_width
+local map_height
+local sprite_size = 16
 
 function init(self)
 	msg.post("#camera", "acquire_camera_focus")
 	msg.post(".", "acquire_input_focus")
+	WIDTH = sys.get_config("display.width")
+	HEIGHT = sys.get_config("display.height")
+	x, y, map_width, map_height = tilemap.get_bounds("/map#city_map")
 end
 
 function final(self)
@@ -25,25 +33,8 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	if action_id == hash("scroll_down") then
-		msg.post("@render:", "use_fixed_projection", { zoom = 2, near = -1, far = 1 })
-	elseif action_id == hash("scroll_up") then
-		msg.post("@render:", "use_fixed_projection", { zoom = 1, near = -1, far = 1 })
-	elseif action_id == hash("scroll") and not action.pressed then
-		current_pos = go.get_position("/camera#camera")
-		if pos.x < action.x then
-			current_pos.x = current_pos.x - (action.x - pos.x)
-		else
-			current_pos.x = current_pos.x +  (pos.x - action.x)
-		end
-		if pos.y < action.y then
-			current_pos.y = current_pos.y - (action.y - pos.y)
-		else
-			current_pos.y = current_pos.y + (pos.y - action.y)
-		end
-		pos.x = action.x
-		pos.y = action.y
-		go.set_position(current_pos, "/camera#camera")
+	if action_id == hash("scroll") and not action.pressed then
+		drag(action)
 	elseif action_id == hash("scroll") and action.pressed then
 		pos = vmath.vector3(action.x, action.y, 2)
 	end
@@ -53,4 +44,29 @@ function on_reload(self)
 	-- Add reload-handling code here
 	-- Learn more: https://defold.com/manuals/hot-reload/
 	-- Remove this function if not needed
+end
+
+function drag(action)
+	current_pos = go.get_position("/camera#camera")
+	if pos.x < action.x then
+		current_pos.x = current_pos.x - (action.x - pos.x)
+	else
+		current_pos.x = current_pos.x +  (pos.x - action.x)
+	end
+	if pos.y < action.y then
+		current_pos.y = current_pos.y - (action.y - pos.y)
+	else
+		current_pos.y = current_pos.y + (pos.y - action.y)
+	end
+	pos.x = action.x
+	pos.y = action.y
+	go.set_position(set_borders(current_pos), "/camera#camera")
+end
+
+function set_borders(position)
+	position.x = math.min(position.x, map_width * sprite_size - WIDTH)
+	position.x = math.max(position.x, 0)
+	position.y = math.min(position.y, map_height * sprite_size - HEIGHT)
+	position.y = math.max(position.y, 0)
+	return position
 end
