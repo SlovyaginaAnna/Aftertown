@@ -1,19 +1,11 @@
-gifts_recieved = 0
-grid = nil
-grid_button = nil
-set_grid = nil
-local time_before_end = 0
+local color_change_time = 2
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	grid = gui.get_node("grid")
-	grid_button = gui.get_node("grid_button") 
-	gui.set_enabled(grid, false)
-	gui.set_enabled(grid_button, false)
-	set_grid = false
-	time_text = gui.get_node("time_text")
-	gui.set_enabled(time_text, false)
-	time_before_end = game_time
+	gui.animate(gui.get_node("box"), gui.PROP_COLOR, vmath.vector4(1, 1, 1, 1), gui.EASING_INOUTQUAD, 60, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	for i = 0, 8 do
+		gui.animate(gui.get_node("star"..i), gui.PROP_COLOR, vmath.vector4(5, 5, 5, 0), gui.EASING_INOUTQUAD, 60, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	end
 end
 
 function final(self)
@@ -23,40 +15,16 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("end") then
-		timer.cancel(0)
-		gui.set_enabled(time_text, false)
-		gui.set_enabled(grid, false)
-		gui.set_enabled(grid_button, false)
-		local background = gui.get_node("box")
-		gui.set_enabled(background, true)
-		end_text = gui.get_node("text")
-		local count = gifts_recieved
-		gui.set_text(end_text, "Congratulations!\n" .. tostring(count) .. " people\n recieved\n Christmas presents")
-	elseif message_id == hash("recieve_gift") then
-		gifts_recieved = gifts_recieved + 1
-	end
 		
 end
 
 function on_input(self, action_id, action)
 	if action_id == hash("touch") and action.pressed then
-		local button = gui.get_node("delete")
 		local start_button = gui.get_node("start")
-		if gui.pick_node(button, action.x, action.y) then
-			msg.post("/go#main", "delete_button")
-		elseif gui.pick_node(start_button, action.x, action.y) then
-			gui.set_enabled(start_button, false)
-			local background = gui.get_node("box")
-			gui.set_enabled(background, false)
+		if gui.pick_node(start_button, action.x, action.y) then
+			local box = gui.get_node("box")
+			gui.set_enabled(box, false)
 			msg.post("/go#main", "start")
-			gui.set_enabled(grid_button, true)
-			gui.set_enabled(time_text, true)
-			change_time()
-			timer.delay(1, true, change_time, 0)
-		elseif gui.pick_node(grid_button, action.x, action.y) then
-			set_grid = not set_grid
-			gui.set_enabled(grid, set_grid)
 		end
 	end
 end

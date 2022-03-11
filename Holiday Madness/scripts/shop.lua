@@ -40,20 +40,11 @@ function S.create(position, varient)
 end
 
 day = function()
-	day_time = true
-	msg.post("/navigator", "day")
-	timer.delay(daytime, false, night)
-	go.set("/night#sprite", "tint.w", 0)
+
 end
 
 night = function()
-	day_time = false
-	msg.post("/navigator", "night")
-	for i = 1, #S.shops do
-		msg.post(S.shops[i].url, "night")
-	end
-	timer.delay(nighttime, false, day)
-	go.set("/night#sprite", "tint.w", 0.5)
+
 end
 
 return S

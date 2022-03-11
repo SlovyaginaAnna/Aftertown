@@ -1,6 +1,6 @@
-font: "/builtins/fonts/vera_mo_bd.ttf"
+font: "/assets/Fonts1/Kenney Pixel.ttf"
 material: "/builtins/fonts/font.material"
-size: 60
+size: 100
 antialias: 1
 alpha: 1.0
 outline_alpha: 0.0
