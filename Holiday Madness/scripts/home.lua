@@ -10,18 +10,22 @@ function H.initHomes()
 end
 
 function H.addHome()
-			
+	orange = {{19, 38}, {45, 33}, {75, 35}, {145, 11}, {134, 25}, {117, 104}, {107, 104}, {30, 121}, {46, 120}, {46, 108}}
+	red = {{30, 32}, {55, 35}, {65, 38}, {134, 11}, {122, 19}, {112, 113}, {103, 114}, {128, 103}, {30, 113}, {30, 106}, {46, 113}}
+	for i = 1, 10 do
+		H.create(c.pos(orange[i]), 0)
+	end
+	for i = 1, 11 do
+		H.create(c.pos(red[i]), 1)
+	end		
 end
 
 function H.create(position, varient)
-	if varient == -1 then
-		varient = math.random(0, 1)
-	end
 	position.z = 0.7
 	if varient == 0 then 
-		obj = factory.create("/homeFactory#factory", position, nil, {number = c.index(position)}, 1.0)
+		obj = factory.create("/orangeHomeFactory#factory", position, nil, {number = c.index(position)}, 1.0)
 	else 
-		obj = factory.create("/home1Factory#factory", position, nil, {number = c.index(position)}, 1.0)
+		obj = factory.create("/redHomeFactory#factory", position, nil, {number = c.index(position)}, 1.0)
 	end
 	local hStruct = {
 		pos 	= position,

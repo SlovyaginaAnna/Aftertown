@@ -8,27 +8,20 @@ day_time = true
 
 function S.initShops()
 	day()
-end
-
-function S.addShop()
-	index = c.randColAndRow() 
-	if index ~= nil then
-		S.count = S.count + 1
-		position = c.colAndRowToPos(index)
-		position.z = 1
-		S.create(position, -1)
+	local orange = {{28, 58}, {126, 130}}
+	local red = {{10, 19}, {116, 61}}
+	for i = 1, 2 do
+		S.create(c.pos(orange[i]), 0)
+		S.create(c.pos(red[i]), 1)
 	end
 end
 
 function S.create(position, varient)
-	if varient == -1 then
-		varient = math.random(0, 1)
-	end
 	position.z = 0.7
 	if varient == 0 then 
-		obj = factory.create("/shopFactory#factory", position, nil, {}, 1.0)
+		obj = factory.create("/orangeShopFactory#factory", position, nil, {}, 1.0)
 	else 
-		obj = factory.create("/shop1Factory#factory", position, nil, {}, 1.0)
+		obj = factory.create("/redShopFactory#factory", position, nil, {}, 1.0)
 	end
 	local hStruct = {
 		pos 	= position,

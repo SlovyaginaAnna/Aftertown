@@ -5,7 +5,7 @@ C.road_built = {} --таблица, хранящая, построена ли н
 				  -- к одному дому подходила только одна дорога)
 C.rows = 18
 C.columns = 19
-C.cell = 48
+C.cell = 16
 -->>>>>>> 9ce0a27718e49433bbd5ff020db48a05c53c96e6
 
 --======================================
@@ -23,6 +23,10 @@ function C.initCoord()
 	end
 	C.setEnableCells()
 	C.setWidths()
+end
+
+function C.pos(coord)
+	return vmath.vector3(coord[1] * C.cell, coord[2] * C.cell, 0)
 end
 
 function C.generate(position, tab)	
@@ -116,8 +120,6 @@ end
 
 function C.setSmth(position, handle)
 	index = C.colAndRow(position)
-	C.coord[index[1]][index[2]].isEmpty = false
-	C.coord[index[1]][index[2]].handle = handle
 end
 
 function C.suitable(indexes)
