@@ -33,9 +33,10 @@ function C.generate(position, tab)
 	--это структура клетки. 
 	local cStruct = {
 		isEmpty = true,
+		hasSign = false,
 		center 	= position,
 		width = 1,
-		handle = nil
+		handle = nil,
 	}
 	table.insert(tab, cStruct)
 	table.insert(C.road_built, false)
@@ -50,18 +51,7 @@ function C.setWidths()
 end
 
 function C.setEnableCells()
-	C.enableCells(1, C.columns, 0, 1)
-	C.enableCells(1, C.rows, 1, 0)
-	C.enableCells(8, C.rows, 2, 0)
-	C.enableCells(8, C.rows, 3, 0)
-	C.enableCells(4, 14, 0, 18)
-	C.enableCells(12, 17, 4, 0)
-	C.enableCells(8, 15, 0, 2)
-	C.enableCells(11, 15, 0, 3)
-	C.enableCells(13, 18, 19, 0)
-	for i = 10, 12 do
-		C.enableCells(15, 17, i, 0)
-	end
+	-- TODO: remove this option entirely.
 end
 
 function C.setWidth(first, second, i, j, width)
@@ -120,6 +110,21 @@ end
 
 function C.setSmth(position, handle)
 	index = C.colAndRow(position)
+end
+
+function C.setSign(position, handle)
+	index = C.colAndRow(position)
+	C.coord[index[1]][index[2]].handle = handle
+	C.coord[index[1]][index[2]].hasSign = true
+end
+
+function C.getSign(position)
+	index = C.colAndRow(position)
+	if C.coord[index[1]][index[2]].hasSign then
+		return C.coord[index[1]][index[2]].handle
+	else
+		return nil
+	end
 end
 
 function C.suitable(indexes)
