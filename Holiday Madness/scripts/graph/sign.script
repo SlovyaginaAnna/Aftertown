@@ -1,20 +1,22 @@
 -- sign should send msg to navigator if there is a sign on the road
 -- I think there should be a go for each sign on the field
 
--- Creates a sign with a given type on a given road on an intersection
--- idk how we will store roads but this will work anyway
-function initialize_sign(sign_type, road, intersection)
-    go.property("Type", sign_type)
-    go.property("Road", road)
-    go.property("Intersection", intersection)
+go.property("Type", 0)
+local time = 0
+
+function update(self, dt)
+    time = time + dt
+    time = time % 1000
 end
 
 -- Added deny sign support
 function on_message(self, message_id, message, sender)
     if message_id == hash("does_sign_allow") then
-        if massage.road == go.property("Road") and message.intersection == go.property("Intersection") then
-            if go.property("Type") == "Noway" then
-                msg.post(navigator, "revert_cars", { road = go.property("Road") })
+        if go.Type == 0 then
+            if time < 500 then -- TODO: make semaphore.
+                msg.post(navigator, "let_car_go", {car = message.car, road = message.road})
+            else
+                msg.post(navigator, "stop_car", {car = message.car, road = message.road})
             end
         end
     end

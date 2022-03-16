@@ -272,15 +272,29 @@ function on_message(self, message_id, message, sender)
 			if is_busy_vertical(message.road.to.number) then
 				msg.post(sender, "wait_on_intersection", {road = message.road})
 			else
-				msg.post(sender, "enter_intersection", {road = message.road})
+				local sign = c.getSign(message.road.to.position)
+				if sign == nil then
+					msg.post(sender, "enter_intersection", {road = message.road})
+				else
+					msg.post(sign, "does_sign_allows", {car = sender, road = message.road})
+				end
 			end
 		else
 			if is_busy_horizontal(message.road.to.number) then
 				msg.post(sender, "wait_on_intersection", {road = message.road})
 			else
-				msg.post(sender, "enter_intersection", {road = message.road})
+				local sign = c.getSign(message.road.to.position)
+				if sign == nil then
+					msg.post(sender, "enter_intersection", {road = message.road})
+				else
+					msg.post(sign, "does_sign_allows", {car = sender, road = message.road})
+				end
 			end
 		end
+	elseif message_id == hash("let_car_go") then
+		msg.post(message.car, "enter_intersection", {road = message.road})
+	elseif message_id == hash("stop_car") then
+		msg.post(message.car, "wait_on_intersection", {road = message.road})
 	elseif message_id == hash("where_next") then
 		next_road = first_road(message.from, message.to, message.color)
 		if next_road == nil then
