@@ -8,6 +8,54 @@ local navigator = nil
 go.property("Color", 0)
 go.property("CarsInFront", 0)
 
+function turn_left(self)
+	local color_string = "green"
+	if self.Color == 0 then
+		color_string = "red"
+	end
+	msg.post("#sprite", "play_animation", {id = hash(color_string .. "_car_left")})
+	msg.post("#light", "play_animation", {id = hash("light_left")})
+end
+
+function turn_right(self)
+	local color_string = "green"
+	if self.Color == 0 then
+		color_string = "red"
+	end
+	msg.post("#sprite", "play_animation", {id = hash(color_string .. "_car_right")})
+	msg.post("#light", "play_animation", {id = hash("light_right")})
+end
+
+function turn_up(self)
+	local color_string = "green"
+	if self.Color == 0 then
+		color_string = "red"
+	end
+	msg.post("#sprite", "play_animation", {id = hash(color_string .. "_car_up")})
+	msg.post("#light", "play_animation", {id = hash("light_up")})
+end
+
+function turn_down(self)
+	local color_string = "green"
+	if self.Color == 0 then
+		color_string = "red"
+	end
+	msg.post("#sprite", "play_animation", {id = hash(color_string .. "_car_down")})
+	msg.post("#light", "play_animation", {id = hash("light_down")})
+end
+
+function turn(self, road)
+	if road.to.position.x > road.from.position.x then
+		turn_right(self)
+	elseif road.to.position.x < road.from.position.x then
+		turn_left(self)
+	elseif road.to.position.y < road.from.position.y then
+		turn_down(self)
+	else
+		turn_up(self)
+	end
+end
+
 -- How much time will a car spend on a given road.
 function time_on_road_left(self, road)
 	local delta = vmath.length(go.get_position(".") - road.to.position)
@@ -17,12 +65,23 @@ function time_on_road_left(self, road)
 end
 
 -- Drive on the given road.
-function drive(self, road)
+function drive(self, road, from_intersection, to_intersection)
 	local position = vmath.vector3(road.to.position.x, road.to.position.y, 0.65)
 	local direction = road.to.position - road.from.position
-	local rotation = vmath.quat_rotation_z(-math.pi / 2 + math.atan2(direction.y, direction.x))
-	go.set_rotation(rotation, ".")
+	local stop_line = road.from.position + (direction * 2 / 3)
+	stop_line = vmath.vector3(stop_line.x, stop_line.y, 0.65)
+	turn(self, road)
 	time = time_on_road_left(self, road)
+	if to_intersection == false then
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, position, go.EASING_LINEAR, time, 0, function() road_is_finished(self, road) end)
+	else
+		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, stop_line, go.EASING_LINEAR, time, 0, function() msg.post(navigator, "intersection", {road = road}) end)
+	end
+end
+
+function enter_intersection(self, road)
+	local position = vmath.vector3(road.to.position.x, road.to.position.y, 0.65)
+	time = 0.5
 	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, position, go.EASING_LINEAR, time, 0, function() road_is_finished(self, road) end)
 end
 
@@ -42,7 +101,7 @@ function init(self)
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
 	if self.Color == 0 then
-		msg.post("#sprite", "play_animation", {id = hash("CAR_green")})
+		msg.post("#sprite", "play_animation", {id = hash("red_car_left")})
 	end
 end
 
@@ -65,9 +124,13 @@ function on_message(self, message_id, message, sender)
 		navigator = message.navigator
 		where_next(self, message.from)
 	elseif message_id == hash("go_to") then
-		drive(self, message.road)
+		drive(self, message.road, message.from_intersection, message.to_intersection)
 	elseif message_id == hash("wait") then
 		timer.delay(1, false, function() where_next(self, c.index(go.get_position("."))) end)
+	elseif message_id == hash("wait_on_intersection") then
+		timer.delay(1, false, function() msg.post(navigator, "intersection", {road = message.road}) end)
+	elseif message_id == hash("enter_intersection") then
+		enter_intersection(self, message.road)
 	elseif message_id == hash("done") then
 		coords = c.colAndRow(go.get_position("."))
 		msg.post(c.coord[coords[1]][coords[2]].handle, "visit")
