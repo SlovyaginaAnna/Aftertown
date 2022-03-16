@@ -8,9 +8,9 @@ day_time = true
 
 function S.initShops()
 	day()
-	local orange = {{28, 58}, {126, 130}}
-	local red = {{10, 19}, {116, 61}}
-	for i = 1, 2 do
+	local orange = {{28/5, 58/5}}
+	local red = {{10/5, 19/5}}
+	for i = 1, 1 do
 		S.create(c.pos(orange[i]), 0)
 		S.create(c.pos(red[i]), 1)
 	end

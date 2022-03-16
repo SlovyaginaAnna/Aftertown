@@ -209,7 +209,8 @@ function first_road(start, finish, color)
 			local script_url = msg.url(s.shops[i].url)
 			script_url.fragment = "shop"
 			if go.get(script_url, "Visitors") < 10
-			and s.shops[i].color == color and (finish == nil or d[c.index(s.shops[i].pos)] < d[finish]) then
+			and s.shops[i].color == color 
+			and (finish == nil or d[c.index(s.shops[i].pos)] < d[finish]) then
 				finish = c.index(s.shops[i].pos)
 			end
 		end

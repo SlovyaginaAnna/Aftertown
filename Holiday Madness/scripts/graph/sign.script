@@ -6,14 +6,14 @@ local time = 0
 
 function update(self, dt)
     time = time + dt
-    time = time % 1000
+    time = time % 100
 end
 
 -- Added deny sign support
 function on_message(self, message_id, message, sender)
     if message_id == hash("does_sign_allow") then
         if go.Type == 0 then
-            if time < 500 then -- TODO: make semaphore.
+            if time < 50 then -- TODO: make semaphore.
                 msg.post(navigator, "let_car_go", {car = message.car, road = message.road})
             else
                 msg.post(navigator, "stop_car", {car = message.car, road = message.road})
