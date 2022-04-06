@@ -52,8 +52,8 @@ end
 -- TODO: remove this function.
 function place_signs(self)
 	local index = {}
-	index[1] = 10
-	index[2] = 10
+	index[1] = 13
+	index[2] = 9
 	local position = vmath.vector3(c.colAndRowToPos(index).x, c.colAndRowToPos(index).y, 0.6)
 	local sign = factory.create("/signs#factory", position)
 	c.setSign(position, sign)
