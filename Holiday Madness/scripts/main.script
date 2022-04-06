@@ -16,7 +16,7 @@ function build_road(self, position)
 		else
 			msg.post("/navigator", "add_road", {from = last_touch, to = position})
 			go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
-			print("table.insert(R.roads, {start={x=" .. last_touch.x .. ", y=" .. last_touch.y .. ",z=0}, finish={x=".. position.x .. ", y=" .. position.y .. "z=0}})")
+			print("table.insert(R.roads, {start={x=" .. last_touch.x .. ", y=" .. last_touch.y .. ",z=0}, finish={x=".. position.x .. ", y=" .. position.y .. ",z=0}})")
 			last_touch = nil
 		end
 	end

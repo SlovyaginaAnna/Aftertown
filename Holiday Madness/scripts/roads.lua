@@ -92,7 +92,7 @@ function R.initRoads()
 	table.insert(R.roads, {start={x=648, y=552,z=0}, finish={x=697.29730224609, y=557.60864257813,z=0}})
 	table.insert(R.roads, {start={x=696, y=552,z=0}, finish={x=759.56762695313, y=555,z=0}})
 	table.insert(R.roads, {start={x=744, y=552,z=0}, finish={x=804.97302246094, y=555,z=0}})
-	table.insert(R.roads, {start={x=408, y=312,z=0}, finish={x=454.5, y=313.96618652344z=0}})
+	table.insert(R.roads, {start={x=408, y=312,z=0}, finish={x=454.5, y=313.96618652344,z=0}})
 	table.insert(R.roads, {start={x=792, y=552,z=0}, finish={x=834.81085205078, y=552.39129638672,z=0}})
 end
 
