@@ -3,9 +3,9 @@ local C = {}
 C.coord	= {}  --таблица, хранящая все клетки 
 C.road_built = {} --таблица, хранящая, построена ли на этой клетке дорога (для того, чтобы
 				  -- к одному дому подходила только одна дорога)
-C.rows = 18
-C.columns = 19
-C.cell = 70
+C.rows = 19
+C.columns = 20
+C.cell = 48
 
 function C.initCoord()
 	C.coord	= {}
