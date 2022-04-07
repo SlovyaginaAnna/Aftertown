@@ -1,6 +1,7 @@
 local c = require "scripts.coordinates"
 local h = require "scripts.home"
 local s = require "scripts.shop"
+local sign_table = require "scripts.signs"
 delete_roads = false
 game_time = 180
 
@@ -87,13 +88,18 @@ function on_message(self, message_id, message, sender)
 		delete_roads = not delete_roads
 	elseif message_id == hash("start") then
 		start_game()
+	elseif message_id == hash('place_sign') then
+		
 	end
 end
 
 function on_input(self, action_id, action)
 	if action_id == hash("touch") and action.pressed and not delete_roads then
+		pos = sign_table.pos(action)
+		if pos ~= nil then
+			factory.create("/traffic_light_factory#factory", pos)
+		end
 		local position = vmath.vector3(action.x, action.y, 0)
-		build_road(self, position)
 	elseif action_id == hash("touch") and action.pressed then
 		local position = vmath.vector3(action.x, action.y, 0)
 		delete_road(self, position)
