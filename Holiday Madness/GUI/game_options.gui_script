@@ -3,6 +3,7 @@ local color_change_time = 2
 function init(self)
 	gui.set_enabled(gui.get_node("sounds"), false)
 	gui.set_enabled(gui.get_node("menu"), false)
+	gui.set_enabled(gui.get_node("signs_panel"), false)
 	sound.play("/music#sound")
 	msg.post(".", "acquire_input_focus")
 	gui.animate(gui.get_node("box"), gui.PROP_COLOR, vmath.vector4(1, 1, 1, 1), gui.EASING_INOUTQUAD, 60, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
@@ -44,6 +45,11 @@ function on_input(self, action_id, action)
 				gui.set_enabled(gui.get_node("sounds"), false)
 			elseif gui.pick_node(gui.get_node("options"), action.x, action.y) or gui.pick_node(gui.get_node("wrench"), action.x, action.y) then
 				gui.set_enabled(gui.get_node("sounds"), true)
+			elseif gui.pick_node(gui.get_node("cart"), action.x, action.y) then
+				panel = gui.get_node("signs_panel")
+				gui.set_enabled(panel, true)
+				gui.set_position(panel, vmath.vector3(234, 856, 1))
+				gui.set_alpha(panel, 1)
 			end
 		end
 	end
