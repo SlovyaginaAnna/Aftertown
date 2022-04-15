@@ -93,13 +93,14 @@ function slider_position(action, slider)
 end
 
 function open_cart(action)
+	set_price()
 	shop_open = true
 	panel = gui.get_node("signs_panel")
 	gui.set_enabled(panel, true)
 	color = gui.get_color(panel)
 	color.w = 1
 	gui.set_color(panel, color)
-	gui.set_position(panel, vmath.vector3(175, 900, 1))
+	gui.set_position(panel, vmath.vector3(217, 887, 1))
 	change_alpha()
 end
 
@@ -156,4 +157,17 @@ function buy_sign(type)
 		change_money_amount(-price)
 		change_alpha()
 	end
+end
+
+function set_price()
+	local signs = signs_table.allSigns()
+	local price = signs_table.get_price_table()
+	for i = 1, #signs do
+		node = gui.get_node(signs[i]..'_text')
+		gui.set_text(node, price[i])
+	end
+end
+
+function set_quantity()
+	-- TO DO set money lables
 end
