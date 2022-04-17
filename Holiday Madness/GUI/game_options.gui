@@ -31,8 +31,8 @@ background_color {
 }
 nodes {
   position {
-    x: 481.0
-    y: 481.0
+    x: 480.0
+    y: 480.0
     z: 0.0
     w: 1.0
   }
@@ -1856,7 +1856,7 @@ nodes {
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
   clipping_inverted: false
-  alpha: 0.36
+  alpha: 1.0
   template_node_child: false
   size_mode: SIZE_MODE_MANUAL
 }
@@ -1893,7 +1893,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "GUI/greenBrick"
+  texture: "GUI/green_brick"
   id: "green_brick"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -1970,7 +1970,7 @@ nodes {
   line_break: false
   parent: "green_brick"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -2088,7 +2088,7 @@ nodes {
   line_break: false
   parent: "red_brick"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -2206,7 +2206,7 @@ nodes {
   line_break: false
   parent: "green_straight"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -2324,7 +2324,7 @@ nodes {
   line_break: false
   parent: "red_straight"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -2442,7 +2442,7 @@ nodes {
   line_break: false
   parent: "red_right"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -2560,7 +2560,7 @@ nodes {
   line_break: false
   parent: "green_right"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -2678,7 +2678,7 @@ nodes {
   line_break: false
   parent: "green_left"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -2796,7 +2796,7 @@ nodes {
   line_break: false
   parent: "red_left"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -2914,7 +2914,7 @@ nodes {
   line_break: false
   parent: "red_not_right"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -3032,7 +3032,7 @@ nodes {
   line_break: false
   parent: "green_not_right"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -3150,7 +3150,7 @@ nodes {
   line_break: false
   parent: "green_not_left"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -3268,7 +3268,7 @@ nodes {
   line_break: false
   parent: "red_not_left"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
@@ -3386,7 +3386,7 @@ nodes {
   line_break: false
   parent: "traffic_light"
   layer: ""
-  inherit_alpha: true
+  inherit_alpha: false
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0

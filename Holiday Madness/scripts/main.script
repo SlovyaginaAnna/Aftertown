@@ -94,10 +94,10 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	if action_id == hash("touch") and action.pressed and not delete_roads then
-		pos = sign_table.pos(action)
-		if pos ~= nil then
-			factory.create("/traffic_light_factory#factory", pos)
+	if action_id == hash("touch") and action.pressed then
+		local tile_index = sign_table.tile_index(action)
+		if tile_index ~= 0 then
+			msg.post('/GUI#game_options', 'signs_panel', {index = tile_index, pos = vmath.vector3(action.x, action.y, 1)})
 		end
 		local position = vmath.vector3(action.x, action.y, 0)
 	elseif action_id == hash("touch") and action.pressed then

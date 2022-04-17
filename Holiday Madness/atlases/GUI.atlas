@@ -23,7 +23,7 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/sprites/signs/greenBrick.png"
+  image: "/assets/sprites/signs/green_brick.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
