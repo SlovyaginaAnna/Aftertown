@@ -2,6 +2,7 @@ local c = require "scripts.coordinates"
 local h = require "scripts.home"
 local s = require "scripts.shop"
 local sign_table = require "scripts.signs"
+local r = require "scripts.roads"
 delete_roads = false
 game_time = 180
 
@@ -16,6 +17,7 @@ function build_road(self, position)
 		else
 			msg.post("/navigator", "add_road", {from = last_touch, to = position})
 			go.set_position(vmath.vector3(last_touch.x, last_touch.y, 100), "/selected_cell")
+			print("table.insert(R.roads, {start={x=" .. last_touch.x .. ", y=" .. last_touch.y .. ",z=0}, finish={x=".. position.x .. ", y=" .. position.y .. ",z=0}})")
 			last_touch = nil
 		end
 	end
@@ -51,11 +53,18 @@ end
 -- TODO: remove this function.
 function place_signs(self)
 	local index = {}
-	index[1] = 10
-	index[2] = 10
+	index[1] = 13
+	index[2] = 9
 	local position = vmath.vector3(c.colAndRowToPos(index).x, c.colAndRowToPos(index).y, 0.6)
 	local sign = factory.create("/signs#factory", position)
 	c.setSign(position, sign)
+end
+
+function build_roads(self)
+	r.initRoads()
+	for _, road in ipairs(r.roads) do
+		msg.post("/navigator", "add_road", {from = road.start, to = road.finish})
+	end
 end
 
 function init(self)
@@ -70,6 +79,7 @@ function init(self)
 	for i = 1, c.columns * c.rows do
 		msg.post("/navigator", "add_cell", {cell = i})
 	end
+	build_roads(self)
 end
 
 function final(self)
