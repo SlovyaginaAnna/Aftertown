@@ -208,13 +208,13 @@ function set_sign(type)
 			local url = factory.create("/road_signs_factory#factory", count_pos(index_of_open_panel, sign[1]))
 			table.insert(sign[4], url)
 			msg.post(url, 'change_sprite', {type = type})
-			msg.post('/navigator', 'set_sigh', {type = type, pos = signs_table.pos(index_of_open_panel)})
+			msg.post('/navigator', 'set_sign', {url = url, type = type, pos = signs_table.pos(index_of_open_panel)})
 		end
 	elseif type == 'traffic_light' and not sign[2] then
 		sign[2] = true
 		change_alpha(node, 1)
 		local url = factory.create("/traffic_light_factory#factory", signs_table.pos(index_of_open_panel))
-		msg.post('/navigator', 'set_sigh', {type = type, pos = signs_table.pos(index_of_open_panel)})
+		msg.post('/navigator', 'set_sign', {url = url, type = type, pos = signs_table.pos(index_of_open_panel)})
 	end
 end
 
@@ -237,7 +237,7 @@ function del_sign(type)
 	for i = 1, #sign[4] do
 		msg.post(sign[4][i], 'change_pos', {pos = count_pos(index_of_open_panel, i)})
 	end
-	msg.post('/navigator', 'del_sigh', {type = type, pos = signs_table.pos(index_of_open_panel)})
+	msg.post('/navigator', 'del_sign', {type = type, pos = signs_table.pos(index_of_open_panel)})
 end
 
 function change_quantity_labels()

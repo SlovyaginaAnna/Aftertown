@@ -1,5 +1,14 @@
-function init(self)
-	timer.delay(5, true, rotate(self))
+go.property("Type", 0)
+local time = 0
+
+function update(self, dt)
+	time = time + dt
+	time = time % 10
+	if time < 5 then
+		go.set_rotation(vmath.quat_rotation_z(math.rad(90)), "#sprite")
+	else
+		go.set_rotation(vmath.quat_rotation_z(math.rad(0)), "#sprite")
+	end
 end
 
 function final(self)
@@ -8,16 +17,17 @@ function final(self)
 	-- Remove this function if not needed
 end
 
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
+	if message_id == hash("does_sign_allows") then
+		if self.Type == 0 then
+			if (time < 5 and message.road.from.position.x == message.road.to.position.x) 
+			or (time >= 5 and message.road.from.position.x ~= message.road.to.position.x) then
+				msg.post(sender, "let_car_go", {car = message.car, road = message.road})
+			else
+				msg.post(sender, "stop_car", {car = message.car, road = message.road})
+			end
+		end
+	end
 end
 
 function on_input(self, action_id, action)
@@ -36,8 +46,4 @@ function on_reload(self)
 	-- Add reload-handling code here
 	-- Learn more: https://defold.com/manuals/hot-reload/
 	-- Remove this function if not needed
-end
-
-rotate = function(self)
-	go.set_rotation(math.rad(90), self)
 end

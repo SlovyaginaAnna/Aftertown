@@ -50,16 +50,6 @@ function draw_road(self, road_struct)
 	msg.post("/navigator", "add_road_url", {road = road_struct, url = road})
 end
 
--- TODO: remove this function.
-function place_signs(self)
-	local index = {}
-	index[1] = 13
-	index[2] = 9
-	local position = vmath.vector3(c.colAndRowToPos(index).x, c.colAndRowToPos(index).y, 0.6)
-	local sign = factory.create("/signs#factory", position)
-	c.setSign(position, sign)
-end
-
 function build_roads(self)
 	r.initRoads()
 	for _, road in ipairs(r.roads) do
@@ -74,7 +64,6 @@ function init(self)
 	c.initCoord()
 	s.initShops()
 	h.initHomes()
-	place_signs(self)
 	-- Init navigator.
 	for i = 1, c.columns * c.rows do
 		msg.post("/navigator", "add_cell", {cell = i})

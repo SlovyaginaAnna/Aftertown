@@ -36,6 +36,7 @@ local roads = {}
 -- Cars urls, for telling cars that they can speed up if possible, works as a stack.
 local cars = {}
 local cells = {}
+local signs = {}
 local cell_count = 0
 
 
@@ -149,6 +150,7 @@ end
 function add_cell(cell)
 	roads[cell] = {}
 	cars[cell] = {}
+	signs[cell] = {}
 	cell_count = cell_count + 1
 end
 
@@ -257,6 +259,10 @@ function is_busy_horizontal(index)
 	return count > 0
 end
 
+function set_sign_navigator(type, position, url)
+	c.setSign(position, url)
+end
+
 -- Object lifecycle.
 -- We can add init(self), final(self), update(self, dt),
 -- on_input(self, action_id, action), function on_reload(self)
@@ -320,5 +326,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("add_road_url") then
 		roads[message.road.from.number][message.road.to.number].url = message.url
 		roads[message.road.to.number][message.road.from.number].url = message.url
+	elseif message_id == hash("set_sign") then
+		set_sign_navigator(message.type, message.pos, message.url)
 	end
 end
