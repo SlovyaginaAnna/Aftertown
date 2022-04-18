@@ -67,8 +67,10 @@ function on_input(self, action_id, action)
 				if sign ~= nil then
 					if shop_open then
 						buy_sign(sign)
-					else 
+					elseif gui.get_color(gui.get_node(sign)).w ~= 1 then
 						set_sign(sign)
+					else
+						del_sign(sign)
 					end
 				end
 			end
@@ -197,22 +199,45 @@ end
 function set_sign(type)
 	local sign = signs_table.get_sign_by_index(index_of_open_panel)
 	local node = gui.get_node(type)
-	if gui.get_color(node).w ~= 1 then
-		if type ~= 'traffic_light' and sign[1] < 4 then
-			if signs_table.set_sign(type) then
-				change_alpha(node, 1)
-				change_quantity_labels()
-				sign[1] = sign[1] + 1
-				table.insert(sign[3], type)
-				local url = factory.create("/road_signs_factory#factory", count_pos(index_of_open_panel, sign[1]))
-				msg.post(url, 'change_sprite', {type = type})
-			end
-		elseif type == 'traffic_light' and not sign[2] then
-			sign[2] = true
+	if type ~= 'traffic_light' and sign[1] < 4 then
+		if signs_table.set_sign(type) then
 			change_alpha(node, 1)
-			local url = factory.create("/traffic_light_factory#factory", signs_table.pos(index_of_open_panel))
+			change_quantity_labels()
+			sign[1] = sign[1] + 1
+			table.insert(sign[3], type)
+			local url = factory.create("/road_signs_factory#factory", count_pos(index_of_open_panel, sign[1]))
+			table.insert(sign[4], url)
+			msg.post(url, 'change_sprite', {type = type})
+			msg.post('/navigator', 'set_sigh', {type = type, pos = signs_table.pos(index_of_open_panel)})
+		end
+	elseif type == 'traffic_light' and not sign[2] then
+		sign[2] = true
+		change_alpha(node, 1)
+		local url = factory.create("/traffic_light_factory#factory", signs_table.pos(index_of_open_panel))
+		msg.post('/navigator', 'set_sigh', {type = type, pos = signs_table.pos(index_of_open_panel)})
+	end
+end
+
+function del_sign(type)
+	local sign = signs_table.get_sign_by_index(index_of_open_panel)
+	local node = gui.get_node(type)
+	price = signs_table.price_by_type(type)
+	currency_table.change_money(price / 2)
+	signs_table.change_quantity(type)
+	change_quantity_labels()
+	change_alpha(node, 0.4)
+	for i = 1, #sign[3] do
+		if sign[3][i] == type then
+			msg.post(sign[4][i], 'disable')
+			table.remove(sign[4], i)
+			table.remove(sign[3], i)
+			break
 		end
 	end
+	for i = 1, #sign[4] do
+		msg.post(sign[4][i], 'change_pos', {pos = count_pos(index_of_open_panel, i)})
+	end
+	msg.post('/navigator', 'del_sigh', {type = type, pos = signs_table.pos(index_of_open_panel)})
 end
 
 function change_quantity_labels()
@@ -224,6 +249,7 @@ function change_quantity_labels()
 end
 
 function count_pos(index, num)
+	print(num)
 	pos = signs_table.pos(index)
 	if num > 2 then
 		pos.y = pos.y - half_tile

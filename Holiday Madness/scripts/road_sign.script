@@ -28,6 +28,8 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash('change_sprite') then
 		msg.post("#"..message['type'], 'enable')
+	elseif message_id == hash('change_pos') then
+		go.set_position(message['pos'], ".")
 	end
 end
 

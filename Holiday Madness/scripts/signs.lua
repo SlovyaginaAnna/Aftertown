@@ -16,7 +16,7 @@ local price = {10, 15, 20, 25, 30, 25, 34, 60, 48, 10, 22, 45, 10}
 
 function S.init()
 	for i = 1, #tiles do
-		table.insert(signs, {0, false, {}})
+		table.insert(signs, {0, false, {}, {}})
 	end
 	for i = 1, #sign_types do
 		table.insert(quantity, {sign_types[i], 0, 0})
@@ -102,6 +102,14 @@ function S.set_sign(type)
 		end
 	end
 	return false
+end
+
+function S.change_quantity(type)
+	for i = 1, #quantity do
+		if type == quantity[i][1] then
+			quantity[i][2] = quantity[i][2] - 1
+		end
+	end
 end
 
 return S
