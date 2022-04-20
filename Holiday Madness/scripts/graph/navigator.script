@@ -199,9 +199,13 @@ function first_road(start, finish, color)
 		end
 		used[v] = true
 		for e, road in pairs(roads[v]) do
-			if d[v] + time_on_road(road) < d[e] then
-				d[e] = d[v] + time_on_road(road)
-				p[e] = v
+			local sign = c.getSign(road.to.position)
+			local url = msg.url(nil, sign, 'road_sign')
+			if sign == nil or not (go.get(url, "Type") == 1 and color == 1 or go.get(url, "Type") == 2 and color == 0) then
+				if d[v] + time_on_road(road) < d[e] then
+					d[e] = d[v] + time_on_road(road)
+					p[e] = v
+				end
 			end
 		end
 	end

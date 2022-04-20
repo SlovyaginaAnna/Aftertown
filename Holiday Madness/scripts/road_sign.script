@@ -1,16 +1,31 @@
+sign_type = {}
+go.property("Type", 1)
+
 function init(self)
 	msg.post("#green_brick", 'disable')
+	sign_type['green_brick'] = 1
 	msg.post("#red_brick", 'disable')
+	sign_type['red_brick'] = 2
 	msg.post("#red_left", 'disable')
+	sign_type['red_left'] = 3
 	msg.post("#green_left", 'disable')
+	sign_type['green_left'] = 4
 	msg.post("#red_right", 'disable')
+	sign_type['red_right'] = 5
 	msg.post("#green_right", 'disable')
+	sign_type['green_right'] = 6
 	msg.post("#red_not_left", 'disable')
+	sign_type['red_not_left'] = 7
 	msg.post("#red_not_right", 'disable')
+	sign_type['red_not_right'] = 8
 	msg.post("#green_not_left", 'disable')
+	sign_type['green_not_left'] = 9
 	msg.post("#green_not_right", 'disable')
+	sign_type['green_not_right'] = 10
 	msg.post("#red_straight", 'disable')
+	sign_type['red_straight'] = 11
 	msg.post("#green_straight", 'disable')
+	sign_type['green_straight'] = 12
 end
 
 function final(self)
@@ -28,8 +43,23 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash('change_sprite') then
 		msg.post("#"..message['type'], 'enable')
+		self.Type = sign_type[message.type]
 	elseif message_id == hash('change_pos') then
 		go.set_position(message['pos'], ".")
+	elseif message_id == hash("does_sign_allows") then
+		if self.Type == 1 then
+			if go.get(message.car, "Color") == 0 then
+				msg.post(sender, "let_car_go", {car = message.car, road = message.road})
+			else
+				msg.post(sender, "stop_car", {car = message.car, road = message.road})
+			end
+		elseif self.Type == 2 then
+			if go.get(message.car, "Color") == 1 then
+				msg.post(sender, "let_car_go", {car = message.car, road = message.road})
+			else
+				msg.post(sender, "stop_car", {car = message.car, road = message.road})
+			end
+		end
 	end
 end
 
