@@ -134643,8 +134643,13 @@ layers {
   }
 }
 layers {
+  id: "tree"
+  z: 0.7
+  is_visible: 1
+}
+layers {
   id: "buildings"
-  z: 0.1
+  z: 0.7
   is_visible: 1
   cell {
     x: 129
@@ -156545,7 +156550,7 @@ layers {
 }
 layers {
   id: "decoration"
-  z: 0.2
+  z: 0.8
   is_visible: 1
   cell {
     x: 48
@@ -198011,7 +198016,7 @@ layers {
 }
 layers {
   id: "decoration2"
-  z: 0.5
+  z: 0.8
   is_visible: 1
   cell {
     x: 48
@@ -200655,7 +200660,7 @@ layers {
 }
 layers {
   id: "decoration3"
-  z: 0.6
+  z: 0.8
   is_visible: 1
   cell {
     x: 56
@@ -200972,11 +200977,6 @@ layers {
     h_flip: 0
     v_flip: 0
   }
-}
-layers {
-  id: "tree"
-  z: 0.7
-  is_visible: 1
 }
 material: "/builtins/materials/tile_map.material"
 blend_mode: BLEND_MODE_ALPHA

@@ -5,7 +5,7 @@ go.property("number", 0)
 function add_car(self)
 	position = go.get_position(".")
 	position.z = 0.65
-	car = factory.create("main:/cars#factory", position, nil, {Color = 0}, 1.0)
+	car = factory.create("main:/cars#factory", position, nil, {Color = 0}, 0.65)
 	self.cars_left  = self.cars_left - 1
 	local navigator = msg.url("main", "/navigator", "")
 	msg.post(car, "start", {from = self.number, to = nil, navigator = navigator})
