@@ -24,6 +24,7 @@ function C.initCoord()
 	C.setWidths()
 end
 
+-- Get position by coords with column and row.
 function C.pos(coord)
 	return vmath.vector3(coord[1] * C.cell, coord[2] * C.cell, 0)
 end
@@ -42,11 +43,7 @@ function C.generate(position, tab)
 end
 
 function C.setWidths()
-	C.setWidth(1, 14, 5, 0, 2)
-	C.setWidth(1, 14, 6, 0, 2)
-	C.setWidth(10, 14, 9, 0, 2)
-	C.setWidth(10, 14, 10, 0, 2)
-	C.setWidth(10, 14, 11, 0, 2)
+	-- TODO - remove.
 end
 
 function C.setEnableCells()
@@ -54,6 +51,7 @@ function C.setEnableCells()
 end
 
 function C.setWidth(first, second, i, j, width)
+	-- TODO - remove.
 	if i == 0 then
 		for k = first, second do
 			C.coord[k][j].width = width
@@ -66,12 +64,14 @@ function C.setWidth(first, second, i, j, width)
 end
 
 function C.getWidth(road_number)
+	-- TODO - remove.
 	index = road_number - 1
 	indexes = {math.floor(index / C.rows) + 1, index % C.rows + 1}
 	return C.coord[indexes[1]][indexes[2]].width
 end
 
 function C.enableCells(first, second, i, j)
+	-- TODO - remove.
 	if i == 0 then
 		for k = first, second do
 			C.coord[k][j].isEmpty = false
@@ -126,40 +126,13 @@ function C.getSign(position)
 	end
 end
 
-function C.suitable(indexes)
-	c = indexes[1]
-	r = indexes[2]
-	suit = true
-	upper = r % (C.rows) == 0
-	lower = r % (C.rows) == 1
-	right = c % (C.columns) == 1
-	left = c % (C.columns) == 0
-	if not upper and (C.coord[c][r + 1].isEmpty) then
-		return suit
-	elseif not lower and (C.coord[c][r - 1].isEmpty) then
-		return suit
-	elseif not left and (C.coord[c - 1][r].isEmpty) then
-		return suit
-	elseif not right and (C.coord[c + 1][r].isEmpty) then
-		return suit
-	elseif not upper and not left and (C.coord[c - 1][r + 1].isEmpty) then
-		return suit
-	elseif not upper and not right and (C.coord[c + 1][r + 1].isEmpty) then
-		return suit
-	elseif not lower and not left and (C.coord[c - 1][r - 1].isEmpty) then
-		return suit
-	elseif not lower and not right and (C.coord[c + 1][r - 1].isEmpty) then
-		return suit
-	else
-		return not suit
-	end
-end
-
 function C.index(position)
 	col = (position.x - position.x % C.cell + C.cell) / C.cell
 	r =  (position.y - position.y % C.cell + C.cell) / C.cell
 	return (col - 1) * C.rows + r % (C.rows + 1)
 end
+
+
 
 function C.colAndRow(position)
 	col = (position.x - position.x % C.cell + C.cell) / C.cell
@@ -174,17 +147,4 @@ function C.colAndRowToPos(index)
 	return position
 end
 
-function C.randColAndRow()
-	count = 0
-	repeat
-		col = math.random(1, C.columns)
-		r = math.random(1, C.rows)
-		count = count + 1
-	until(C.isEmpty({col, r}) and C.suitable({col, r}) or count == 20) 
-	if count == 20 then
-		return nil
-	else 
-		return {col, r}
-	end
-end
 return C
