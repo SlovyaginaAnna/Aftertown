@@ -11,8 +11,8 @@ function S.initShops()
 	local orange = {{28/5, 58/5}}
 	local red = {{10/5, 19/5}}
 	for i = 1, 1 do
-		S.create(c.pos(orange[i]), 0)
-		S.create(c.pos(red[i]), 1)
+		S.create(vmath.vector3(146, 309, 0), 0)
+		S.create(vmath.vector3(450.5, 872, 0), 1)
 	end
 end
 

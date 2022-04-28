@@ -24,6 +24,7 @@ function C.initCoord()
 	C.setWidths()
 end
 
+-- Get position by coords with column and row.
 function C.pos(coord)
 	return vmath.vector3(coord[1] * C.cell, coord[2] * C.cell, 0)
 end
@@ -130,6 +131,8 @@ function C.index(position)
 	r =  (position.y - position.y % C.cell + C.cell) / C.cell
 	return (col - 1) * C.rows + r % (C.rows + 1)
 end
+
+
 
 function C.colAndRow(position)
 	col = (position.x - position.x % C.cell + C.cell) / C.cell

@@ -10,14 +10,11 @@ function H.initHomes()
 end
 
 function H.addHome()
-	orange = {{19/5, 38/5}, {45/5, 33/5}, {75/5, 35/5}}
-	red = {{30/5, 32/5}, {55/5, 35/5}, {65/5, 38/5}}
-	for i = 1, 3 do
-		H.create(c.pos(orange[i]), 0)
-	end
-	for i = 1, 3 do
-		H.create(c.pos(red[i]), 1)
-	end		
+	H.create(vmath.vector3(730.0, 567.3, 0), 0)
+	H.create(vmath.vector3(295.1, 568.6, 0), 0)
+	
+	H.create(vmath.vector3(871.6, 569.8, 0), 1)
+	H.create(vmath.vector3(465.5, 568.6, 0), 1)
 end
 
 function H.create(position, varient)
