@@ -1,5 +1,5 @@
 components {
-  id: "traffic_light"
+  id: "road_sign"
   component: "/scripts/traffic_light.script"
   position {
     x: 0.0
