@@ -1,6 +1,5 @@
+local cycle = require "scripts.day_cycle"
 local start = nil
-local day_lenght = 30
-local night_lenghth = 20
 
 function init(self)
 	start = os.time()
@@ -40,4 +39,8 @@ function on_reload(self)
 	-- Add reload-handling code here
 	-- Learn more: https://defold.com/manuals/hot-reload/
 	-- Remove this function if not needed
+end
+
+function start_day()
+	cycle.start_day()
 end
