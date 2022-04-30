@@ -2,15 +2,16 @@ local S = {}
 local tiles = {{38, 92}, {108, 92}, {38, 67}, {65, 84}, {108, 84}, {108, 80}, {137, 71},
 {38, 45}, {45, 45}, {52, 45}, {65, 45}, {82, 45}, {121, 45}, {137, 45}, {116, 52},
 {145, 25}, {115, 25}, {115, 18}, {99, 15}, {99, 26}, {99, 36}, {82, 36}, {82, 26}, {82, 15},
- {45, 15}, {31, 2}, {38, 26}, {38, 36}, {52, 62}, {65, 62}, {115, 36}}
+ {45, 15}, {31, 2}, {38, 26}, {38, 36}, {52, 62}, {65, 62}, {115, 36}, {38, 74}}
 local signs = {} --table with all signs placed on a crossroad
 local tile_size = 16
-local tiles_count = 31
+local tiles_count = 32
 local signs_num = 13
 local sign_types = {'green_brick', 'red_brick', 'green_straight', 'red_straight', 'green_right', 'red_right', 'green_left', 'red_left',
 'green_not_right', 'red_not_right', 'green_not_left', 'red_not_left', 'traffic_light'} --all signs types
 local quantity = {} --tabel consists of type of the sign, bought number and placed number
 local price = {10, 15, 20, 25, 30, 25, 34, 60, 48, 10, 22, 45, 10}
+
 
 function S.init()
 	for i = 1, #tiles do
@@ -34,7 +35,9 @@ function S.tile_index(event_pos)
 end
 
 function S.pos(index)
-	return vmath.vector3(tiles[index][1] * tile_size - tile_size / 2, tiles[index][2] * tile_size - tile_size / 2, 1)
+	local x = tiles[index][1] * tile_size - tile_size / 2
+	local y = tiles[index][2] * tile_size - tile_size / 2
+	return vmath.vector3(x, y, 1)
 end
 
 function S.price(type)
