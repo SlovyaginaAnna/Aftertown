@@ -117,6 +117,12 @@ function C.setSign(position, handle)
 	C.coord[index[1]][index[2]].hasSign = true
 end
 
+function C.delSign(position, type)
+	index = C.colAndRow(position)
+	C.coord[index[1]][index[2]].handle = nil
+	C.coord[index[1]][index[2]].hasSign = false
+end
+
 function C.getSign(position)
 	index = C.colAndRow(position)
 	if C.coord[index[1]][index[2]].hasSign then

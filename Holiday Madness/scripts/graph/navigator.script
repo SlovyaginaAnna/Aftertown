@@ -311,6 +311,10 @@ function set_sign_navigator(type, position, url)
 	c.setSign(position, url)
 end
 
+function delete_sign(type, position)
+	c.delSign(position, type)
+end
+
 -- Object lifecycle.
 -- We can add init(self), final(self), update(self, dt),
 -- on_input(self, action_id, action), function on_reload(self)
@@ -380,5 +384,7 @@ function on_message(self, message_id, message, sender)
 		roads[message.road.to.number][message.road.from.number].url = message.url
 	elseif message_id == hash("set_sign") then
 		set_sign_navigator(message.type, message.pos, message.url)
+	elseif message_id == hash("del_sign") then
+		delete_sign(message.type, message.pos)
 	end
 end
