@@ -170,7 +170,7 @@ function remove_car(car, from, to)
 	roads[from][to].cars = roads[from][to].cars - 1
 	for k, other_car in pairs(cars[from][to]) do
 		go.set(other_car, "CarsInFront", go.get(other_car, "CarsInFront") - 1)
-		msg.post(other_car, "go_to", {road = roads[from][to]})
+		msg.post(other_car, "speed_up", {road = roads[from][to]})
 	end
 end
 
@@ -364,7 +364,7 @@ function on_message(self, message_id, message, sender)
 			msg.post(sender, "go_to", { road = next_road, from_intersection = is_intersection(next_road.from.number), to_intersection = is_intersection(next_road.to.number) })
 		end
 	elseif message_id == hash("road_can_be_entered") then
-	road_can_be_entered(sender, message.from.number, message.to.number)
+		road_can_be_entered(sender, message.from.number, message.to.number)
 	
 	elseif message_id == hash("add_cell") then
 		add_cell(message.cell)

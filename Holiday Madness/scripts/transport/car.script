@@ -70,17 +70,22 @@ end
 
 -- Drive on the given road.
 function drive(self, road, from_intersection, to_intersection)
+	self.is_entering_road = true
 	turn(self, road)
-	local position = vmath.vector3(road.to.position.x, road.to.position.y, 0.65)
-	local direction = road.to.position - road.from.position
-	local stop_line = road.from.position + (direction * 40 / vmath.length(direction))
-	time = time_on_road_left(self, road) * 40 / vmath.length(direction)
+	local direction = (road.to.position - road.from.position) * 40 / vmath.length(road.to.position - road.from.position)
+	local stop_line = road.from.position + direction
+	time = time_on_road_left(self, road) * 35 / vmath.length(road.to.position - road.from.position)
 	stop_line = vmath.vector3(stop_line.x, stop_line.y, 0.65)
-	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, stop_line, go.EASING_LINEAR, time, 0, function() continue_driving(self, road, from_intersection, to_intersection) end)
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, stop_line, go.EASING_LINEAR, time, 0, 
+		function() 
+			self.is_entering_road = false
+			msg.post(navigator, "road_can_be_entered", {from = road.from, to = road.to}) 
+			continue_driving(self, road, from_intersection, to_intersection)
+		end
+	)
 end
 
 function continue_driving(self, road, from_intersection, to_intersection)
-	msg.post(navigator, "road_can_be_entered", {from = road.from, to = road.to})
 	local position = vmath.vector3(road.to.position.x, road.to.position.y, 0.65)
 	local direction = road.to.position - road.from.position
 	local stop_line = road.to.position - (direction * 40 / vmath.length(direction))
@@ -115,6 +120,7 @@ function init(self)
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
 	self.direction = "left"
+	self.is_entering_road = false
 	if self.Color == 0 then
 		msg.post("#sprite", "play_animation", {id = hash("red_car_left")})
 	end
@@ -140,6 +146,8 @@ function on_message(self, message_id, message, sender)
 		where_next(self, message.from)
 	elseif message_id == hash("go_to") then
 		drive(self, message.road, message.from_intersection, message.to_intersection)
+	elseif message_id == hash("speed_up") and not self.is_entering_road then
+		continue_driving(self, message.road, message.from_intersection, message.to_intersection)
 	elseif message_id == hash("wait") then
 		timer.delay(math.random(0.5, 1.5), false, function() where_next(self, c.index(go.get_position("."))) end)
 	elseif message_id == hash("wait_on_intersection") then
