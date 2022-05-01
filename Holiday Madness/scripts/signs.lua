@@ -53,7 +53,7 @@ end
 
 function S.init()
 	for i = 1, #tiles do
-		table.insert(signs, {0, false, {}, {}})
+		table.insert(signs, {0, false, {}, {}, nil})
 	end
 	for i = 1, #sign_types do
 		table.insert(quantity, {sign_types[i], 0, 0})

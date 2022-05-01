@@ -347,9 +347,11 @@ function open_sign_panel(index, pos)
 	end
 	local quantity = signs_table.get_sign_by_index(index)
 	for i = 1, #quantity[3] do
-		print(quantity[3][i])
 		node = gui.get_node(quantity[3][i])
 		change_alpha(node, 1)
+	end
+	if quantity[2] then
+		change_alpha(gui.get_node('traffic_light'), 1)
 	end
 	change_quantity_labels()
 	panel = gui.get_node('signs_panel')
@@ -384,10 +386,14 @@ function set_sign(type)
 			msg.post('/navigator', 'set_sign', {url = url, type = type, pos = signs_table.pos(index_of_open_panel)})
 		end
 	elseif type == 'traffic_light' and not sign[2] then
-		sign[2] = true
-		change_alpha(node, 1)
-		local url = factory.create("/traffic_light_factory#factory", signs_table.pos(index_of_open_panel))
-		msg.post('/navigator', 'set_sign', {url = url, type = type, pos = signs_table.pos(index_of_open_panel)})
+		if signs_table.set_sign(type) then
+			sign[2] = true
+			change_alpha(node, 1)
+			local url = factory.create("/traffic_light_factory#factory", signs_table.pos(index_of_open_panel))
+			sign[5] = url
+			msg.post('/navigator', 'set_sign', {url = url, type = type, pos = signs_table.pos(index_of_open_panel)})
+			change_quantity_labels()
+		end
 	end
 end
 
@@ -395,25 +401,31 @@ function del_sign(type)
 	local sign = signs_table.get_sign_by_index(index_of_open_panel)
 	local node = gui.get_node(type)
 	price = signs_table.price_by_type(type)
-	sign[1] = sign[1] - 1
+	if type ~= 'traffic_light' then
+		sign[1] = sign[1] - 1
+		for i = 1, #sign[3] do
+			if sign[3][i] == type then
+				if panel_count == 8 then
+					panel_count = panel_count + 1
+					msg.post('.', 'change_panel')
+				end
+				msg.post(sign[4][i], 'disable')
+				table.remove(sign[4], i)
+				table.remove(sign[3], i)
+				break
+			end
+		end
+		for i = 1, #sign[4] do
+			msg.post(sign[4][i], 'change_pos', {pos = count_pos(index_of_open_panel, i)})
+		end
+	else 
+		sign[2] = false
+		msg.post(sign[5], 'delete')
+		sign[5] = nil
+	end
 	signs_table.change_quantity(type)
 	change_quantity_labels()
 	change_alpha(node, 0.4)
-	for i = 1, #sign[3] do
-		if sign[3][i] == type then
-			if panel_count == 8 then
-				panel_count = panel_count + 1
-				msg.post('.', 'change_panel')
-			end
-			msg.post(sign[4][i], 'disable')
-			table.remove(sign[4], i)
-			table.remove(sign[3], i)
-			break
-		end
-	end
-	for i = 1, #sign[4] do
-		msg.post(sign[4][i], 'change_pos', {pos = count_pos(index_of_open_panel, i)})
-	end
 	msg.post('/navigator', 'del_sign', {type = type, pos = signs_table.pos(index_of_open_panel)})
 end
 

@@ -27,6 +27,8 @@ function on_message(self, message_id, message, sender)
 				msg.post(sender, "stop_car", {car = message.car, road = message.road})
 			end
 		end
+	elseif message_id == hash("delete") then
+		go.delete('.')
 	end
 end
 
