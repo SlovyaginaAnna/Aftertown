@@ -1,5 +1,7 @@
 local s = require("scripts.shop")
 local c = require("scripts.coordinates")
+local day_cycle = require "scripts.day_cycle"
+local time = 0
 
 -- Car, which drives from one home to another.
 -- Car chooses route with navigator, that calculates the fastest route.
@@ -7,6 +9,7 @@ local c = require("scripts.coordinates")
 local navigator = nil
 go.property("Color", 0)
 go.property("CarsInFront", 0)
+go.property("Home", 0)
 
 function turn_left(self)
 	self.direction = "left"
@@ -111,8 +114,12 @@ function road_is_finished(self, road)
 end
 
 -- Ask navigator where to go next.
-function where_next(self, home)
-	msg.post(navigator, "where_next", { from = home, to = self.to, color = self.Color, direction = self.direction })
+function where_next(self, from)
+	if day_cycle.is_day() then
+		msg.post(navigator, "where_next", { from = from, to = self.to, color = self.Color, direction = self.direction })
+	else
+		msg.post(navigator, "where_next", { from = from, to = self.Home, color = self.Color, direction = self.direction })
+	end
 end
 
 function init(self)
@@ -136,6 +143,11 @@ function update(self, dt)
 	-- Add update code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
+	time = time + dt
+	if time > 100 then
+		time = 0
+		-- TODO - finish
+	end
 end
 
 function on_message(self, message_id, message, sender)
@@ -145,6 +157,7 @@ function on_message(self, message_id, message, sender)
 		navigator = message.navigator
 		where_next(self, message.from)
 	elseif message_id == hash("go_to") then
+		time = 0
 		drive(self, message.road, message.from_intersection, message.to_intersection)
 	elseif message_id == hash("speed_up") and not self.is_entering_road then
 		continue_driving(self, message.road, message.from_intersection, message.to_intersection)
@@ -156,7 +169,7 @@ function on_message(self, message_id, message, sender)
 		enter_intersection(self, message.road)
 	elseif message_id == hash("done") then
 		coords = c.colAndRow(go.get_position("."))
-		msg.post(c.coord[coords[1]][coords[2]].handle, "visit")
+		-- msg.post(c.coord[coords[1]][coords[2]].handle, "visit") TODO - fix.
 	elseif message_id == hash("accept") then
 		go.delete(".")
 	elseif message_id == hash("deny") then

@@ -248,7 +248,7 @@ end
 function get_next_road_restore_path(start, finish, color, p, d)
 	directions = {"up", "left", "down", "right"}
 	-- Find closest shop if there is no finish specified.
-	next_dir = "up"
+	local next_dir = "up"
 	if finish == nil then
 		for i = 1, #(s.shops) do
 			for e, dir in pairs(directions) do
@@ -262,18 +262,26 @@ function get_next_road_restore_path(start, finish, color, p, d)
 				end
 			end
 		end
+	else
+		for e, dir in pairs(directions) do
+			if d[vertex(finish, dir)] < d[vertex(finish, next_dir)] then
+				next_dir = dir
+			end
+		end
 	end
+
 	-- Trace back the path.
-	next_cell = finish
+	local next_cell = finish
 
 	while next_cell ~= nil and p[vertex(next_cell, next_dir)] ~= nil and p[vertex(next_cell, next_dir)].v ~= start do
 		next_vertex = p[vertex(next_cell, next_dir)]
 		next_cell = next_vertex.v
 		next_dir = next_vertex.dir
 	end
+	
 	if (start == finish) then
 		return Road:new(start, finish, 1, 0)
-	elseif (next_cell == nil or not day_cycle.is_day()) then
+	elseif (next_cell == nil) then
 		return nil
 	else
 		return roads[start][next_cell]

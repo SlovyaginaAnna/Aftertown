@@ -1,3 +1,5 @@
+local c = require "scripts.coordinates"
+
 local spawning_cars_time = 2
 go.property("cars_left", 10)
 go.property("number", 0)
@@ -5,7 +7,7 @@ go.property("number", 0)
 function add_car(self)
 	position = go.get_position(".")
 	position.z = 0.65
-	car = factory.create("main:/cars#factory", position, nil, {Color = 0}, 0.65)
+	car = factory.create("main:/cars#factory", position, nil, {Color = 0, Home = c.index(go.get_position("."))}, 0.65)
 	self.cars_left  = self.cars_left - 1
 	local navigator = msg.url("main", "/navigator", "")
 	msg.post(car, "start", {from = self.number, to = nil, navigator = navigator})
