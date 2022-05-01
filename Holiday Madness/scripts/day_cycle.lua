@@ -2,6 +2,11 @@ local day_cycle = {}
 local day = false
 local day_length = 60
 
+function day_cycle.everyone_home()
+	-- TODO
+	print("Everyone is home")
+end
+
 function day_cycle.is_day()
 	return day
 end

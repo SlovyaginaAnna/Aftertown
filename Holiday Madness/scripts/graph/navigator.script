@@ -369,6 +369,8 @@ function on_message(self, message_id, message, sender)
 		next_road = get_next_road(message.from, message.to, message.color, message.direction)
 		if next_road == nil then
 			msg.post(sender, "wait")
+		elseif next_road.from == next_road.to and message.to ~= nil then
+			msg.post(sender, "home")
 		elseif next_road.from == next_road.to then
 			msg.post(sender, "done")
 		else

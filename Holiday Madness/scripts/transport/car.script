@@ -1,4 +1,5 @@
 local s = require("scripts.shop")
+local h = require("scripts.home")
 local c = require("scripts.coordinates")
 local day_cycle = require "scripts.day_cycle"
 local time = 0
@@ -170,6 +171,9 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("done") then
 		coords = c.colAndRow(go.get_position("."))
 		-- msg.post(c.coord[coords[1]][coords[2]].handle, "visit") TODO - fix.
+		timer.delay(math.random(0.5, 1.5), false, function() where_next(self, c.index(go.get_position("."))) end)
+	elseif message_id == hash("home") then
+		h.returnCar()
 	elseif message_id == hash("accept") then
 		go.delete(".")
 	elseif message_id == hash("deny") then

@@ -1,7 +1,20 @@
 local c = require "scripts.coordinates"
+local day_cycle = require "scripts.day_cycle"
 local H ={}
 H.homes	= {}  --таблиа хранящая все дома
 H.count = 0
+local cars_home = 0
+
+function H.sendCar()
+	cars_home = cars_home - 1
+end
+
+function H.returnCar()
+	cars_home = cars_home + 1
+	if cars_home == 0 then
+		day_cycle.everyone_home()
+	end
+end
 
 function H.initHomes()
 	H.homes = {}
