@@ -12,6 +12,44 @@ local sign_types = {'green_brick', 'red_brick', 'green_straight', 'red_straight'
 local quantity = {} --tabel consists of type of the sign, bought number and placed number
 local price = {10, 15, 20, 25, 30, 25, 34, 60, 48, 10, 22, 45, 10}
 
+function is_left_turn(from_dir, to_dir)
+	return (from_dir == "up" and to_dir == "left" or from_dir == "left" and to_dir == "down"
+		 or from_dir == "down" and to_dir == "right" or from_dir == "right" and to_dir == "up")
+end
+
+function is_right_turn(from_dir, to_dir)
+	return (from_dir == "up" and to_dir == "right" or from_dir == "right" and to_dir == "down"
+		 or from_dir == "down" and to_dir == "left" or from_dir == "left" and to_dir == "up")
+end
+
+function S.can_turn(from_dir, to_dir, sign_type, color)
+	-- Colors:
+	--   0 - red
+	--   1 - green
+	if sign_type == 3 and color == 0 then
+		return is_left_turn(from_dir, to_dir)
+	elseif sign_type == 4 and color == 1 then
+		return is_left_turn(from_dir, to_dir)
+	elseif sign_type == 5 and color == 0 then
+		return is_right_turn(from_dir, to_dir)
+	elseif sign_type == 6 and color == 1 then
+		return is_right_turn(from_dir, to_dir)
+	elseif sign_type == 7 and color == 0 then
+		return not is_left_turn(from_dir, to_dir)
+	elseif sign_type == 8 and color == 0 then
+		return not is_right_turn(from_dir, to_dir)
+	elseif sign_type == 9 and color == 1 then
+		return not is_left_turn(from_dir, to_dir)
+	elseif sign_type == 10 and color == 1 then
+		return not is_right_turn(from_dir, to_dir)
+	elseif sign_type == 11 and color == 0 then
+		return from_dir == to_dir
+	elseif sign_type == 12 and color == 1 then
+		return from_dir == to_dir
+	else
+		return true
+	end
+end
 
 function S.init()
 	for i = 1, #tiles do

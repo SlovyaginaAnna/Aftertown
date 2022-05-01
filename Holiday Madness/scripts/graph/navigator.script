@@ -3,6 +3,7 @@
 
 local c = require "scripts.coordinates"
 local s = require "scripts.shop"
+local sgn = require "scripts.signs"
 
 -- Graph
 
@@ -180,9 +181,9 @@ end
 
 function get_road_direction(road)
 	if (road.to.position.x > road.from.position.x) then
-		return "left"
-	elseif (road.to.position.x < road.from.position.x) then
 		return "right"
+	elseif (road.to.position.x < road.from.position.x) then
+		return "left"
 	elseif (road.to.position.y > road.from.position.y) then
 		return "up"
 	else
@@ -221,26 +222,20 @@ function get_next_road(start, finish, color, direction)
 		if v == nil or d[vertex(v, v_dir)] == math.huge then
 			break
 		end
-		-- Calculate distances of nearest cells.
+
 		used[vertex(v, v_dir)] = true
+		-- Check roads.
 		for e, road in pairs(roads[v]) do
-			-- Try to turn
-			for e, dir in pairs(directions) do
-				-- TODO - check if sign allows to turn.
-				if d[vertex(v, v_dir)] < d[vertex(v, dir)] then
-					d[vertex(v, dir)] = d[vertex(v, v_dir)] + time_on_road(road)
-					p[vertex(v, dir)] = {v = v, dir = v_dir}
-				end
-			end
-			-- Check roads.
-			if v_dir == get_road_direction(road) then -- Check if car goes to the right direction
-				local sign = c.getSign(road.to.position)
-				local url = msg.url(nil, sign, 'road_sign')
-				if sign == nil or not (go.get(url, "Type") == 1 and color == 1 or go.get(url, "Type") == 2 and color == 0) then
-					if d[vertex(v, v_dir)] + time_on_road(road) < d[vertex(e, v_dir)] then
-						d[vertex(e, v_dir)] = d[vertex(v, v_dir)] + time_on_road(road)
-						p[vertex(e, v_dir)] = {v = v, dir = v_dir}
-					end
+			local sign = c.getSign(road.to.position)
+			local from_sign = c.getSign(road.from.position)
+			local url = msg.url(nil, sign, 'road_sign')
+			local from_url = msg.url(nil, from_sign, 'road_sign')
+			dir = get_road_direction(road)
+			if (sign == nil or not (go.get(url, "Type") == 1 and color == 1 or go.get(url, "Type") == 2 and color == 0))
+			and (from_sign == nil or sgn.can_turn(v_dir, dir, go.get(from_url, "Type"), color)) then
+				if d[vertex(v, v_dir)] + time_on_road(road) < d[vertex(e, dir)] then
+					d[vertex(e, dir)] = d[vertex(v, v_dir)] + time_on_road(road)
+					p[vertex(e, dir)] = {v = v, dir = v_dir}
 				end
 			end
 		end
