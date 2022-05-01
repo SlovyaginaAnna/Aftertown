@@ -13,6 +13,8 @@ local sign_panel_width = 255
 local sign_panel_height = 112
 local map_width = 960
 local panel_count = 0
+local money_in_the_beginning = 0
+local end_day_panel_open = false
 
 
 function init(self)
@@ -24,6 +26,8 @@ function init(self)
 	gui.set_enabled(gui.get_node("question_panel"), false)
 	gui.set_enabled(gui.get_node('clues'), false)
 	gui.set_enabled(gui.get_node('arrow_clue'), false)
+	gui.set_enabled(gui.get_node('end_game_panel'), false)
+	gui.set_enabled(gui.get_node('end_day_panel'), false)
 	sound.play("/music#sound")
 	msg.post(".", "acquire_input_focus")
 	gui.animate(gui.get_node("box"), gui.PROP_COLOR, vmath.vector4(1, 1, 1, 1), gui.EASING_INOUTQUAD, 60, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
@@ -49,7 +53,22 @@ function on_message(self, message_id, message, sender)
 		index_of_open_panel = message['index']
 	elseif message_id == hash('change_panel') then
 		training()
+	elseif message_id == hash('recieve_gift') then
+		set_money_amount()
+	elseif message_id == hash('start_day') then
+		print('gui day')
+		start_gui_day()
+	elseif message_id == hash('start_night') then
+		print('gui night')
+		animate_night()
+	elseif message_id == hash('end') then
+		game_over()
 	end
+end
+
+function game_over()
+	gui.set_enabled(gui.get_node('end_game_panel'), false)
+	menu_panel_open = false
 end
 
 function sound_controller(action)
@@ -91,6 +110,8 @@ function pressed_actions(action)
 		gui.set_enabled(gui.get_node('question_panel'), false)
 	elseif gui.pick_node(gui.get_node("clues_exit"), action.x, action.y) then
 		close_clue_pnel()
+	elseif end_day_panel_open and gui.pick_node(gui.get_node("end_day_panel_exit"), action.x, action.y) then
+		end_day_panel_close()
 	else
 		local sign =  if_click_on_sign(action)
 		if sign ~= nil then
@@ -204,6 +225,7 @@ end
 
 function on_start()
 	-- msg.post("/go#main", "start")
+	msg.post('/day_cycle#day_cycle', 'start_game')
 	start_day()
 end
 
@@ -275,6 +297,10 @@ end
 
 function change_money_amount(price)
 	currency_table.change_money(price)
+	set_money_amount()
+end
+
+function set_money_amount()
 	local money = gui.get_node('money_amount')
 	local amount = currency_table.cash()
 	gui.set_text(money, amount)
@@ -339,7 +365,6 @@ function change_alpha(node, alpha)
 	gui.set_color(node, color)
 end
 
--- TO DO create sign go
 function set_sign(type)
 	if panel_count == 6 then
 		panel_count = panel_count + 1
@@ -417,10 +442,25 @@ function count_pos(index, num)
 end
 
 function animate_night()
-	gui.animate(gui.get_node("night"), gui.PROP_COLOR, vmath.vector4(0, 0, 0, 0.7), gui.EASING_INOUTQUAD, 20, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
+	gui.animate(gui.get_node("night"), gui.PROP_COLOR, vmath.vector4(0, 0, 0, 0.7), gui.EASING_INOUTQUAD, 15, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
 end
 
-function start_day()
+function start_gui_day()
+	menu_panel_open = true
+	money_in_the_beginning = currency_table.cash()
 	change_alpha(gui.get_node('night'), 0)
-	gui.animate(gui.get_node('arrow'), gui.PROP_ROTATION, vmath.vector3(0, 0, 0), gui.EASING_INOUTQUAD, 15)
+	gui.animate(gui.get_node('arrow'), gui.PROP_ROTATION, vmath.vector3(0, 0, 0), gui.EASING_INOUTQUAD, 60)
+end
+
+function open_end_day_panel()
+	local earned = currency_table.cash() - money_in_the_beginning
+	menu_panel_open = false
+	gui.set_enabled(gui.get_node('end_day_panel_open'), true)
+	gui.set_text(gui.get_node('end_day_text'), 'Today you earned '..earned..' coins')
+end
+
+function end_day_panel_close()
+	end_day_panel_open = false
+	gui.set_enabled(gui.get_node('end_day_panel_open'), false)
+	msg.post('/day_cycle#day_cycle', 'start_day')
 end

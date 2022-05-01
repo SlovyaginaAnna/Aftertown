@@ -2,7 +2,7 @@ local cycle = require "scripts.day_cycle"
 local start = nil
 
 function init(self)
-	start = os.time()
+	cycle.start_night()
 end
 
 function final(self)
@@ -12,15 +12,19 @@ function final(self)
 end
 
 function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	local time = os.time()
+	if cycle.is_day() and time - start == cycle.day_length() then
+		start_night()
+	end	
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
+	if message_id == hash('start_game')then
+		start_day()
+		cycle.end_training()
+	elseif message_id == hash('start_day') then
+		start_day()
+	end
 end
 
 function on_input(self, action_id, action)
@@ -42,5 +46,14 @@ function on_reload(self)
 end
 
 function start_day()
+	print('day')
+	start = os.time()
 	cycle.start_day()
+	msg.post('/GUI#game_options', 'start_day')
+end
+
+function start_night()
+	print('night')
+	cycle.start_night()
+	msg.post('/GUI#game_options', 'start_night')
 end

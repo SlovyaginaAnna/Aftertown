@@ -119,5 +119,5 @@ function start_game()
 end
 
 end_game = function()
-	msg.post("/gui", "end")
+	msg.post("/GUI#game_options", "end")
 end
