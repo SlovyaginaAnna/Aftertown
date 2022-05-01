@@ -1,5 +1,5 @@
 local day_cycle = {}
-local day = false
+local day = true
 local day_length = 60
 
 function day_cycle.everyone_home()

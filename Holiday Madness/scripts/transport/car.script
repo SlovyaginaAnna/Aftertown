@@ -3,6 +3,7 @@ local h = require("scripts.home")
 local c = require("scripts.coordinates")
 local day_cycle = require "scripts.day_cycle"
 local time = 0
+local in_shop = false
 
 -- Car, which drives from one home to another.
 -- Car chooses route with navigator, that calculates the fastest route.
@@ -74,6 +75,7 @@ end
 
 -- Drive on the given road.
 function drive(self, road, from_intersection, to_intersection)
+	in_shop = false
 	self.is_entering_road = true
 	turn(self, road)
 	local direction = (road.to.position - road.from.position) * 40 / vmath.length(road.to.position - road.from.position)
@@ -144,11 +146,13 @@ function update(self, dt)
 	-- Add update code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
-	time = time + dt
-	if time > 100 then
-		time = 0
-		-- TODO - finish
-	end
+	if not in_shop then
+		time = time + dt
+		if time > 100 then
+			time = 0
+			-- TODO - finish
+		end
+	end	
 end
 
 function on_message(self, message_id, message, sender)
@@ -169,15 +173,17 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("enter_intersection") then
 		enter_intersection(self, message.road)
 	elseif message_id == hash("done") then
-		coords = c.colAndRow(go.get_position("."))
-		-- msg.post(c.coord[coords[1]][coords[2]].handle, "visit") TODO - fix.
-		timer.delay(math.random(0.5, 1.5), false, function() where_next(self, c.index(go.get_position("."))) end)
+		local coords = c.colAndRow(go.get_position("."))
+		msg.post(c.coord[coords[1]][coords[2]].handle, "visit")
 	elseif message_id == hash("home") then
 		h.returnCar()
+	elseif message_id == hash("go_home") then
+		msg.post(navigator, "where_next", { from = c.index(go.get_position(".")), to = self.Home, color = self.Color, direction = self.direction })
 	elseif message_id == hash("accept") then
-		go.delete(".")
+		time = 0
+		in_shop = true
 	elseif message_id == hash("deny") then
-		where_next(self, c.index(go.get_position(".")))
+		timer.delay(math.random(0.5, 1.5), false, function() where_next(self, c.index(go.get_position("."))) end)
 	end
 end
 

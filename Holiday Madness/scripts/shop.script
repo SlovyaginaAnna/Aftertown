@@ -1,3 +1,6 @@
+local day_cycle = require "scripts.day_cycle"
+local currency = require "scripts.currency"
+
 go.property("Visitors", 0)
 local visitors_table = {}
 local max_number = 10
@@ -23,13 +26,14 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("visit") then
-		if self.Visitors < max_number and day_time then 
+		if self.Visitors < max_number and day_cycle.is_day() then 
+			currency.change_money(3)
 			self.Visitors = self.Visitors + 1
 			table.insert(visitors_table, sender)
 			msg.post(sender, "accept")
 			label.set_text("#label", self.Visitors)
 			msg.post("/gui", "recieve_gift")
-			timer.delay(time_in_shop, false, function() send_home(self) end)
+			timer.delay(time_in_shop, false, function() send_home(self, sender) end)
 		else
 			msg.post(sender, "deny")
 		end
@@ -57,8 +61,8 @@ function on_reload(self)
 	-- Remove this function if not needed
 end
 
-function send_home(self)
-	msg.post("/navigator", "send_home")
+function send_home(self, car)
+	msg.post(car, "go_home")
 	table.remove(visitors_table, 1)
 	if self.Visitors > 0 then
 		self.Visitors = self.Visitors - 1

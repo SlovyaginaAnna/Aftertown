@@ -109,6 +109,7 @@ end
 
 function C.setSmth(position, handle)
 	index = C.colAndRow(position)
+	C.coord[index[1]][index[2]].handle = handle
 end
 
 function C.setSign(position, handle)

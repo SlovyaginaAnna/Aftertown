@@ -283,6 +283,8 @@ function get_next_road_restore_path(start, finish, color, p, d)
 		return Road:new(start, finish, 1, 0)
 	elseif (next_cell == nil) then
 		return nil
+	elseif roads[start] == nil then
+		return nil
 	else
 		return roads[start][next_cell]
 	end
