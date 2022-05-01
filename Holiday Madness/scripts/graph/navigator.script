@@ -4,6 +4,7 @@
 local c = require "scripts.coordinates"
 local s = require "scripts.shop"
 local sgn = require "scripts.signs"
+local day_cycle = require "scripts.day_cycle"
 
 -- Graph
 
@@ -272,7 +273,7 @@ function get_next_road_restore_path(start, finish, color, p, d)
 	end
 	if (start == finish) then
 		return Road:new(start, finish, 1, 0)
-	elseif (next_cell == nil) then
+	elseif (next_cell == nil or not day_cycle.is_day()) then
 		return nil
 	else
 		return roads[start][next_cell]
