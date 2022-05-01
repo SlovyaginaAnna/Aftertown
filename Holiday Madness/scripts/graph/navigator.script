@@ -19,7 +19,8 @@ function Road:new(from, to, width, length)
 	obj.to = to
 	obj.width = width
 	obj.length = length
-	obj.cars = 0
+	obj.cars = 0 -- All cars on the road.
+	obj.cars_entered = 0 -- Cars that just entered the road.
 
 	-- Make object.
 	setmetatable(obj, self)
@@ -83,10 +84,8 @@ function can_add_road(cell1, cell2)
 end
 
 -- Adds a road to the graph using cells. Returns a new road.
--- TO_REWORK in the newer version
 
 function add_road(cell1, cell2)
-	
 	width = math.min(c.getWidth(cell1.number), c.getWidth(cell2.number))
 	length = vmath.length(cell2.position - cell1.position)
 	roads[cell1.number][cell2.number] = Road:new(cell1, cell2, width, length)
@@ -102,7 +101,6 @@ end
 
 -- Builds a road from start to finish,
 -- then send an add_road msg to the sender if the road is made(?)
--- ask Seva about it
 
 function plan_roads(start, finish, sender)
 	-- Center coordinates.
@@ -156,6 +154,11 @@ end
 function add_car_riding(car, from, to)
 	table.insert(cars[from][to], car)
 	roads[from][to].cars = roads[from][to].cars + 1
+	roads[from][to].cars_entered = roads[from][to].cars_entered + 1
+end
+
+function road_can_be_entered(car, from, to)
+	roads[from][to].cars_entered = roads[from][to].cars_entered - 1
 end
 
 -- Decrement cars counter on the road.
@@ -245,7 +248,7 @@ function is_busy_vertical(index)
 	local count = 0
 	for e, road in pairs(roads[index]) do 
 		if road.from.position.x == road.to.position.x then
-			count = count + road.cars
+			count = count + road.cars_entered
 		end
 	end
 	return count > 0
@@ -255,7 +258,7 @@ function is_busy_horizontal(index)
 	local count = 0
 	for e, road in pairs(roads[index]) do 
 		if road.from.position.y == road.to.position.y then
-			count = count + road.cars
+			count = count + road.cars_entered
 		end
 	end
 	return count > 0
@@ -317,7 +320,9 @@ function on_message(self, message_id, message, sender)
 			go.set(sender, "CarsInFront", next_road.cars - 1)
 			msg.post(sender, "go_to", { road = next_road, from_intersection = is_intersection(next_road.from.number), to_intersection = is_intersection(next_road.to.number) })
 		end
-		
+	elseif message_id == hash("road_can_be_entered") then
+	road_can_be_entered(sender, message.from.number, message.to.number)
+	
 	elseif message_id == hash("add_cell") then
 		add_cell(message.cell)
 		

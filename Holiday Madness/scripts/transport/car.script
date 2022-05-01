@@ -66,11 +66,21 @@ end
 
 -- Drive on the given road.
 function drive(self, road, from_intersection, to_intersection)
+	turn(self, road)
 	local position = vmath.vector3(road.to.position.x, road.to.position.y, 0.65)
 	local direction = road.to.position - road.from.position
-	local stop_line = road.from.position + (direction * 2 / 3)
+	local stop_line = road.from.position + (direction * 40 / vmath.length(direction))
+	time = time_on_road_left(self, road) * 40 / vmath.length(direction)
 	stop_line = vmath.vector3(stop_line.x, stop_line.y, 0.65)
-	turn(self, road)
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, stop_line, go.EASING_LINEAR, time, 0, function() continue_driving(self, road, from_intersection, to_intersection) end)
+end
+
+function continue_driving(self, road, from_intersection, to_intersection)
+	msg.post(navigator, "road_can_be_entered", {from = road.from, to = road.to})
+	local position = vmath.vector3(road.to.position.x, road.to.position.y, 0.65)
+	local direction = road.to.position - road.from.position
+	local stop_line = road.to.position - (direction * 40 / vmath.length(direction))
+	stop_line = vmath.vector3(stop_line.x, stop_line.y, 0.65)
 	time = time_on_road_left(self, road)
 	if to_intersection == false then
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, position, go.EASING_LINEAR, time, 0, function() road_is_finished(self, road) end)
@@ -81,7 +91,7 @@ end
 
 function enter_intersection(self, road)
 	local position = vmath.vector3(road.to.position.x, road.to.position.y, 0.65)
-	time = 0.5
+	time = time_on_road_left(self, road)
 	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, position, go.EASING_LINEAR, time, 0, function() road_is_finished(self, road) end)
 end
 
@@ -126,9 +136,9 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("go_to") then
 		drive(self, message.road, message.from_intersection, message.to_intersection)
 	elseif message_id == hash("wait") then
-		timer.delay(1, false, function() where_next(self, c.index(go.get_position("."))) end)
+		timer.delay(math.random(0.5, 1.5), false, function() where_next(self, c.index(go.get_position("."))) end)
 	elseif message_id == hash("wait_on_intersection") then
-		timer.delay(1, false, function() msg.post(navigator, "intersection", {road = message.road}) end)
+		timer.delay(math.random(0.5, 1.5), false, function() msg.post(navigator, "intersection", {road = message.road}) end)
 	elseif message_id == hash("enter_intersection") then
 		enter_intersection(self, message.road)
 	elseif message_id == hash("done") then
