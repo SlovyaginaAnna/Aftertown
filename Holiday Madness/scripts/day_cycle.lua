@@ -1,7 +1,7 @@
 local day_cycle = {}
 local day = true
 local training = true
-local day_length = 60
+local day_length = 10
 local already_home = false
 
 function day_cycle.everyone_home()
