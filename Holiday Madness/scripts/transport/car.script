@@ -4,6 +4,7 @@ local c = require("scripts.coordinates")
 local day_cycle = require "scripts.day_cycle"
 local time = 0
 local in_shop = false
+local in_home = true
 
 -- Car, which drives from one home to another.
 -- Car chooses route with navigator, that calculates the fastest route.
@@ -75,6 +76,7 @@ end
 
 -- Drive on the given road.
 function drive(self, road, from_intersection, to_intersection)
+	in_home = false
 	in_shop = false
 	self.is_entering_road = true
 	turn(self, road)
@@ -120,8 +122,10 @@ end
 function where_next(self, from)
 	if day_cycle.is_day() then
 		msg.post(navigator, "where_next", { from = from, to = self.to, color = self.Color, direction = self.direction })
-	else
+	elseif not in_home then
 		msg.post(navigator, "where_next", { from = from, to = self.Home, color = self.Color, direction = self.direction })
+	else
+		timer.delay(math.random(1.5, 2.5), false, function() where_next(self, c.index(go.get_position("."))) end)
 	end
 end
 
@@ -177,6 +181,7 @@ function on_message(self, message_id, message, sender)
 		msg.post(c.coord[coords[1]][coords[2]].handle, "visit")
 	elseif message_id == hash("home") then
 		h.returnCar()
+		in_home = true
 	elseif message_id == hash("go_home") then
 		msg.post(navigator, "where_next", { from = c.index(go.get_position(".")), to = self.Home, color = self.Color, direction = self.direction })
 	elseif message_id == hash("accept") then
