@@ -9,6 +9,7 @@ go.property("Color", 0)
 go.property("CarsInFront", 0)
 
 function turn_left(self)
+	self.direction = "left"
 	local color_string = "green"
 	if self.Color == 0 then
 		color_string = "red"
@@ -18,6 +19,7 @@ function turn_left(self)
 end
 
 function turn_right(self)
+	self.direction = "right"
 	local color_string = "green"
 	if self.Color == 0 then
 		color_string = "red"
@@ -27,6 +29,7 @@ function turn_right(self)
 end
 
 function turn_up(self)
+	self.direction = "up"
 	local color_string = "green"
 	if self.Color == 0 then
 		color_string = "red"
@@ -36,6 +39,7 @@ function turn_up(self)
 end
 
 function turn_down(self)
+	self.direction = "down"
 	local color_string = "green"
 	if self.Color == 0 then
 		color_string = "red"
@@ -103,13 +107,14 @@ end
 
 -- Ask navigator where to go next.
 function where_next(self, home)
-	msg.post(navigator, "where_next", { from = home, to = self.to, color = self.Color })
+	msg.post(navigator, "where_next", { from = home, to = self.to, color = self.Color, direction = self.direction })
 end
 
 function init(self)
 	-- Add initialization code here
 	-- Learn more: https://defold.com/manuals/script/
 	-- Remove this function if not needed
+	self.direction = "left"
 	if self.Color == 0 then
 		msg.post("#sprite", "play_animation", {id = hash("red_car_left")})
 	end
