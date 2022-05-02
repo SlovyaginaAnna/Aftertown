@@ -52,10 +52,7 @@ function update(self, dt)
 		open_end_day_panel_toggle = false
 		local earned = currency_table.cash() - money_in_the_beginning
 		menu_panel_open = false
-<<<<<<< HEAD
-=======
 		end_day_panel_open = true
->>>>>>> gui_fix
 		gui.set_enabled(gui.get_node('end_day_panel'), true)
 		gui.set_text(gui.get_node('end_day_text'), 'Today you earned '..earned..' coins')
 	end
