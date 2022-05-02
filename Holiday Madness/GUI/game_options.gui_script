@@ -15,6 +15,7 @@ local map_width = 960
 local panel_count = 0
 local money_in_the_beginning = 0
 local end_day_panel_open = false
+local tutorial_panel_open = false
 
 
 function init(self)
@@ -28,25 +29,22 @@ function init(self)
 	gui.set_enabled(gui.get_node('arrow_clue'), false)
 	gui.set_enabled(gui.get_node('end_game_panel'), false)
 	gui.set_enabled(gui.get_node('end_day_panel'), false)
+	gui.set_enabled(gui.get_node('tutorial'), false)
 	sound.play("/music#sound")
 	msg.post(".", "acquire_input_focus")
-	gui.animate(gui.get_node("box"), gui.PROP_COLOR, vmath.vector4(1, 1, 1, 1), gui.EASING_INOUTQUAD, 60, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+	gui.animate(gui.get_node("box"), gui.PROP_COLOR, vmath.vector4(1, 1, 1, 1), gui.EASING_INOUTQUAD, 60,
+	 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
 	for i = 0, 8 do
-		gui.animate(gui.get_node("star"..i), gui.PROP_COLOR, vmath.vector4(1, 1, 1, 0), gui.EASING_INOUTQUAD, 60, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+		gui.animate(gui.get_node("star"..i), gui.PROP_COLOR, vmath.vector4(1, 1, 1, 0), gui.EASING_INOUTQUAD, 60,
+		 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
 	end
 	change_money_amount(0)
 	return_alpha()
 	slider_len = gui.get_size(gui.get_node("music_sound")).x
 end
 
-function final(self)
-end
-
-function update(self, dt)
-end
-
 function on_message(self, message_id, message, sender)
-	if message_id == hash('signs_panel') then
+	if message_id == hash('signs_panel') and menu_panel_open then
 		shop_open = false
 		return_alpha()
 		open_sign_panel(message['index'], message['pos'])
@@ -63,6 +61,8 @@ function on_message(self, message_id, message, sender)
 		animate_night()
 	elseif message_id == hash('end') then
 		game_over()
+	elseif message_id == hash('end_day_panel') then
+		open_end_day_panel()
 	end
 end
 
@@ -83,7 +83,7 @@ end
 
 function pressed_actions(action)
 	if main_menu_open and gui.pick_node(gui.get_node("start"), action.x, action.y) then
-		training()
+		click_on_start_button()
 	elseif gui.pick_node(gui.get_node("cross"), action.x, action.y) then
 		sound.play("/sound#sound")
 		gui.set_enabled(gui.get_node("sounds"), false)
@@ -99,12 +99,7 @@ function pressed_actions(action)
 		sound.play("/sound#sound")
 		close_sighns_panel()
 	elseif menu_panel_open and gui.pick_node(gui.get_node("question"), action.x, action.y) then
-		if panel_count == 10 then
-			panel_count = panel_count + 1
-			msg.post('.', 'change_panel')
-		end
-		sound.play("/sound#sound")
-		gui.set_enabled(gui.get_node('question_panel'), true)
+		click_on_question_button()
 	elseif gui.pick_node(gui.get_node("exit_question"), action.x, action.y) then
 		sound.play("/sound#sound")
 		gui.set_enabled(gui.get_node('question_panel'), false)
@@ -112,25 +107,68 @@ function pressed_actions(action)
 		close_clue_pnel()
 	elseif end_day_panel_open and gui.pick_node(gui.get_node("end_day_panel_exit"), action.x, action.y) then
 		end_day_panel_close()
+	elseif tutorial_panel_open and gui.pick_node(gui.get_node("Yes"), action.x, action.y) then
+		skip_tutorial()
+	elseif tutorial_panel_open and gui.pick_node(gui.get_node("No"), action.x, action.y) then
+		start_tutorial()
 	else
-		local sign =  if_click_on_sign(action)
-		if sign ~= nil then
-			sound.play("/sound#sound")
-			if shop_open then
-				buy_sign(sign)
-			elseif gui.get_color(gui.get_node(sign)).w ~= 1 then
-				set_sign(sign)
-			else
-				del_sign(sign)
-			end
+		if_sign_clicked(action)
+	end
+end
+
+function if_sign_clicked(action)
+	local sign =  if_click_on_sign(action)
+	if sign ~= nil then
+		sound.play("/sound#sound")
+		if shop_open then
+			buy_sign(sign)
+		elseif gui.get_color(gui.get_node(sign)).w ~= 1 then
+			set_sign(sign)
+		else
+			del_sign(sign)
 		end
 	end
 end
 
+function click_on_start_button()
+	tutorial_panel_open = true
+	gui.set_enabled(gui.get_node('tutorial'), true)
+	main_menu_open = false
+	sound.play("/sound#sound")
+	gui.set_enabled(gui.get_node("box"), false)
+	gui.set_enabled(gui.get_node("menu"), true)
+	gui.set_enabled(gui.get_node("clock"), true)
+end
+
+function click_on_question_button()
+	if panel_count == 10 then
+		panel_count = panel_count + 1
+		msg.post('.', 'change_panel')
+	end
+	sound.play("/sound#sound")
+	gui.set_enabled(gui.get_node('question_panel'), true)
+end
+
+function skip_tutorial()
+	tutorial_panel_open = false
+	gui.set_enabled(gui.get_node('tutorial'), false)
+	sound.play("/sound#sound")
+	on_start()
+end
+
+function start_tutorial()
+	tutorial_panel_open = false
+	gui.set_enabled(gui.get_node('tutorial'), false)
+	sound.play("/sound#sound")
+	training()
+end
+
 function close_clue_pnel()
-	if panel_count ~= 2 and panel_count ~= 4 and panel_count ~= 6 and panel_count ~= 8 and panel_count ~= 10 then
+	if panel_count ~= 2 and panel_count ~= 4 and panel_count ~= 6 and
+	 panel_count ~= 8 and panel_count ~= 10 then
 		gui.set_enabled(gui.get_node('clues'), false)
-		local texts = {'greeting', 'cart_text', 'sign_meaning', 'place_signs1', 'place_signs2', 'delete_sign', 'other_rules'}
+		local texts = {'greeting', 'cart_text', 'sign_meaning', 'place_signs1', 'place_signs2',
+		 'delete_sign', 'other_rules'}
 		for i = 1, #texts do
 			change_alpha(gui.get_node(texts[i]), 0)
 		end
@@ -167,50 +205,40 @@ function change_volume(action, slider)
 end
 
 function training()
-	local node = gui.get_node('arrow_clue')
-	main_menu_open = false
 	menu_panel_open = true
-	sound.play("/sound#sound")
-	gui.set_enabled(gui.get_node("box"), false)
-	gui.set_enabled(gui.get_node("menu"), true)
-	gui.set_enabled(gui.get_node("clock"), true)
+	local node = gui.get_node('arrow_clue')
 	if panel_count == 0 then
 		gui.set_enabled(gui.get_node('clues'), true)
 		change_alpha(gui.get_node('greeting'), 1)
 	elseif panel_count == 1 then
 		gui.set_enabled(node, true)
 		gui.set_position(node, vmath.vector3(140, 915, 1))
-		gui.animate(node, gui.PROP_POSITION, vmath.vector3(100, 915, 1), gui.EASING_INOUTQUAD, 1, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+		gui.animate(node, gui.PROP_POSITION, vmath.vector3(100, 915, 1), gui.EASING_INOUTQUAD, 1,
+		 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
 	elseif panel_count == 2 then
 		change_alpha(gui.get_node('clues_exit'), 0.4)
 		gui.set_position(node, vmath.vector3(140, 705, 1))
-		gui.animate(node, gui.PROP_POSITION, vmath.vector3(100, 705, 1), gui.EASING_INOUTQUAD, 1, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+		gui.animate(node, gui.PROP_POSITION, vmath.vector3(100, 705, 1), gui.EASING_INOUTQUAD, 1,
+		 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
 		gui.set_enabled(gui.get_node('clues'), true)
 		change_alpha(gui.get_node('cart_text'), 1)
 	elseif panel_count == 3 then
 		change_alpha(gui.get_node('clues_exit'), 1)
 		gui.set_enabled(node, false)
 	elseif panel_count == 4 then
-		change_alpha(gui.get_node('clues_exit'), 0.4)
-		gui.set_enabled(gui.get_node('clues'), true)
-		change_alpha(gui.get_node('place_signs1'), 1)
+		tutorial('place_signs1')
 	elseif panel_count == 5 or panel_count == 7 or panel_count == 9 then
 		change_alpha(gui.get_node('clues_exit'), 1)
 	elseif panel_count == 6 then
-		gui.set_enabled(gui.get_node('clues'), true)
-		change_alpha(gui.get_node('place_signs2'), 1)
-		change_alpha(gui.get_node('clues_exit'), 0.4)
+		tutorial('place_signs2')
 	elseif panel_count == 8 then
-		gui.set_enabled(gui.get_node('clues'), true)
-		change_alpha(gui.get_node('delete_sign'), 1)
-		change_alpha(gui.get_node('clues_exit'), 0.4)
+		tutorial('delete_sign')
 	elseif panel_count == 10 then
-		gui.set_enabled(gui.get_node('clues'), true)
-		change_alpha(gui.get_node('sign_meaning'), 1)
-		change_alpha(gui.get_node('clues_exit'), 0.4)
+		tutorial('sign_meaning')
 		gui.set_enabled(node, true)
 		gui.set_position(node, vmath.vector3(140, 775, 1))
-		gui.animate(node, gui.PROP_POSITION, vmath.vector3(100, 775, 1), gui.EASING_INOUTQUAD, 1, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+		gui.animate(node, gui.PROP_POSITION, vmath.vector3(100, 775, 1), gui.EASING_INOUTQUAD, 1,
+		 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
 	elseif panel_count == 11 then
 		change_alpha(gui.get_node('clues_exit'), 1)
 		gui.set_enabled(node, false)
@@ -220,19 +248,17 @@ function training()
 	elseif panel_count == 13 then
 		on_start()
 	end
-	
+end
+
+function tutorial(text)
+	gui.set_enabled(gui.get_node('clues'), true)
+	change_alpha(gui.get_node(text), 1)
+	change_alpha(gui.get_node('clues_exit'), 0.4)
 end
 
 function on_start()
-	-- msg.post("/go#main", "start")
+	menu_panel_open = true
 	msg.post('/day_cycle#day_cycle', 'start_game')
-	start_day()
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end
 
 change_time = function()
@@ -454,25 +480,29 @@ function count_pos(index, num)
 end
 
 function animate_night()
-	gui.animate(gui.get_node("night"), gui.PROP_COLOR, vmath.vector4(0, 0, 0, 0.7), gui.EASING_INOUTQUAD, 15, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
+	gui.animate(gui.get_node("night"), gui.PROP_COLOR, vmath.vector4(0, 0, 0, 0.7),
+	 gui.EASING_INOUTQUAD, 15, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
 end
 
 function start_gui_day()
 	menu_panel_open = true
 	money_in_the_beginning = currency_table.cash()
 	change_alpha(gui.get_node('night'), 0)
-	gui.animate(gui.get_node('arrow'), gui.PROP_ROTATION, vmath.vector3(0, 0, 0), gui.EASING_INOUTQUAD, 60)
+	local arrow = gui.get_node('arrow')
+	gui.set_rotation(arrow, vmath.vector3(0, 0, 360))
+	gui.animate(arrow, gui.PROP_ROTATION, vmath.vector3(0, 0, 0), gui.EASING_INOUTQUAD, 60)
 end
 
 function open_end_day_panel()
 	local earned = currency_table.cash() - money_in_the_beginning
 	menu_panel_open = false
-	gui.set_enabled(gui.get_node('end_day_panel_open'), true)
+	end_day_panel_open = true
+	gui.set_enabled(gui.get_node('end_day_panel'), true)
 	gui.set_text(gui.get_node('end_day_text'), 'Today you earned '..earned..' coins')
 end
 
 function end_day_panel_close()
 	end_day_panel_open = false
-	gui.set_enabled(gui.get_node('end_day_panel_open'), false)
+	gui.set_enabled(gui.get_node('end_day_panel'), false)
 	msg.post('/day_cycle#day_cycle', 'start_day')
 end

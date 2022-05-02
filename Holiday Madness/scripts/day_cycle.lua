@@ -8,7 +8,7 @@ function day_cycle.everyone_home()
 	-- TODO
 	if already_home == false and not day and not training then
 		already_home = true
-		open_end_day_panel()
+		msg.post('/GUI#game_options', 'end_day_panel')
 	end
 	print("Everyone is home")
 end
