@@ -16,6 +16,8 @@ local panel_count = 0
 local money_in_the_beginning = 0
 local end_day_panel_open = false
 local tutorial_panel_open = false
+local open_end_day_panel_toggle = false
+
 
 
 function init(self)
@@ -42,6 +44,21 @@ function init(self)
 	return_alpha()
 	slider_len = gui.get_size(gui.get_node("music_sound")).x
 end
+
+
+function final(self)
+end
+
+function update(self, dt)
+	if open_end_day_panel_toggle then
+		open_end_day_panel_toggle = false
+		local earned = currency_table.cash() - money_in_the_beginning
+		menu_panel_open = false
+		gui.set_enabled(gui.get_node('end_day_panel'), true)
+		gui.set_text(gui.get_node('end_day_text'), 'Today you earned '..earned..' coins')
+	end
+end
+
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash('signs_panel') and menu_panel_open then
@@ -490,7 +507,7 @@ function start_gui_day()
 	change_alpha(gui.get_node('night'), 0)
 	local arrow = gui.get_node('arrow')
 	gui.set_rotation(arrow, vmath.vector3(0, 0, 360))
-	gui.animate(arrow, gui.PROP_ROTATION, vmath.vector3(0, 0, 0), gui.EASING_INOUTQUAD, 60)
+	gui.animate(arrow, gui.PROP_ROTATION, vmath.vector3(0, 0, 0), gui.EASING_INOUTQUAD, 80)
 end
 
 function open_end_day_panel()
@@ -499,6 +516,7 @@ function open_end_day_panel()
 	end_day_panel_open = true
 	gui.set_enabled(gui.get_node('end_day_panel'), true)
 	gui.set_text(gui.get_node('end_day_text'), 'Today you earned '..earned..' coins')
+	open_end_day_panel_toggle = true
 end
 
 function end_day_panel_close()

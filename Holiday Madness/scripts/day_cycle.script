@@ -1,5 +1,6 @@
 local cycle = require "scripts.day_cycle"
-local start = nil
+local start = 0
+local start_night_time = 0
 
 function init(self)
 	cycle.start_night()
@@ -9,6 +10,8 @@ function update(self, dt)
 	local time = os.time()
 	if cycle.is_day() and time - start == cycle.day_length() then
 		start_night()
+	elseif not cycle.is_day() and time - start_night_time == cycle.night_lenght() then
+		msg.post('/GUI#game_options', 'end_day_panel')
 	end	
 end
 
@@ -29,6 +32,7 @@ function start_day()
 end
 
 function start_night()
+	start_night_time = os.time()
 	print('night')
 	cycle.start_night()
 	msg.post('/GUI#game_options', 'start_night')
