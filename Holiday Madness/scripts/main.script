@@ -78,12 +78,6 @@ function init(self)
 	build_roads(self)
 end
 
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
 function update(self, dt)
 end
 
@@ -106,16 +100,6 @@ function on_input(self, action_id, action)
 			msg.post('/GUI#game_options', 'signs_panel', {index = tile_index, pos = vmath.vector3(action.x, action.y, 1)})
 		end
 	end
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
-end
-
-function start_game()
-	timer.delay(game_time, false, end_game)
 end
 
 end_game = function()

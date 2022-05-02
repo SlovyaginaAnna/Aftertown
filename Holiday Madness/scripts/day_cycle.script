@@ -1,20 +1,17 @@
 local cycle = require "scripts.day_cycle"
-local start = nil
+local start = 0
+local start_night_time = 0
 
 function init(self)
 	cycle.start_night()
-end
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
 end
 
 function update(self, dt)
 	local time = os.time()
 	if cycle.is_day() and time - start == cycle.day_length() then
 		start_night()
+	elseif not cycle.is_day() and time - start_night_time == cycle.night_lenght() then
+		msg.post('/GUI#game_options', 'end_day_panel')
 	end	
 end
 
@@ -27,24 +24,6 @@ function on_message(self, message_id, message, sender)
 	end
 end
 
-function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
-end
-
 function start_day()
 	print('day')
 	start = os.time()
@@ -53,6 +32,7 @@ function start_day()
 end
 
 function start_night()
+	start_night_time = os.time()
 	print('night')
 	cycle.start_night()
 	msg.post('/GUI#game_options', 'start_night')

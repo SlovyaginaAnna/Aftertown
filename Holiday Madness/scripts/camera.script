@@ -13,18 +13,6 @@ function init(self)
 	x, y, map_width, map_height = tilemap.get_bounds("/map#city_map")
 end
 
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
 function on_message(self, message_id, message, sender)
 	if message_id == hash("set_view_projection") then
 		self.view = message.view                    -- [1]
@@ -38,12 +26,6 @@ function on_input(self, action_id, action)
 	elseif action_id == hash("scroll") and action.pressed then
 		pos = vmath.vector3(action.x, action.y, 2)
 	end
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
 end
 
 function drag(action)
