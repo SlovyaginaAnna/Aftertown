@@ -15,9 +15,13 @@ local map_width = 960
 local panel_count = 0
 local money_in_the_beginning = 0
 local end_day_panel_open = false
+<<<<<<< HEAD
 local tutorial_panel_open = false
 local open_end_day_panel_toggle = false
 
+=======
+local open_end_day_panel_toggle = false
+>>>>>>> aad119ffc2d0056e172b4df95e1bf700034864a1
 
 
 function init(self)
@@ -511,11 +515,14 @@ function start_gui_day()
 end
 
 function open_end_day_panel()
+<<<<<<< HEAD
 	local earned = currency_table.cash() - money_in_the_beginning
 	menu_panel_open = false
 	end_day_panel_open = true
 	gui.set_enabled(gui.get_node('end_day_panel'), true)
 	gui.set_text(gui.get_node('end_day_text'), 'Today you earned '..earned..' coins')
+=======
+>>>>>>> aad119ffc2d0056e172b4df95e1bf700034864a1
 	open_end_day_panel_toggle = true
 end
 

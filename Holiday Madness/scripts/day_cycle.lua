@@ -1,8 +1,12 @@
 local day_cycle = {}
 local day = true
 local training = true
+<<<<<<< HEAD
 local day_length = 60
 local night_length = 20
+=======
+local day_length = 10
+>>>>>>> aad119ffc2d0056e172b4df95e1bf700034864a1
 local already_home = false
 
 function day_cycle.everyone_home()
