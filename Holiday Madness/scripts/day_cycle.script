@@ -1,7 +1,9 @@
 local cycle = require "scripts.day_cycle"
 local h = require "scripts.home"
+local currency = require "scripts.currency"
 local start = 0
 local start_night_time = 0
+local game_over = false
 
 function init(self)
 	cycle.start_night()
@@ -9,9 +11,9 @@ end
 
 function update(self, dt)
 	local time = os.time()
-	if cycle.is_day() and time - start == cycle.day_length() then
+	if cycle.is_day() and time - start == cycle.day_length() and not game_over then
 		start_night()
-	elseif not cycle.is_day() and time - start_night_time == cycle.night_lenght() then
+	elseif not cycle.is_day() and time - start_night_time == cycle.night_lenght() and not game_over then
 		msg.post('/GUI#game_options', 'end_day_panel')
 	end	
 end
@@ -34,6 +36,10 @@ function start_day()
 end
 
 function start_night()
+	if currency.cash() < 0 then
+		game_over = true
+		msg.post('/go#main', 'end')
+	end
 	start_night_time = os.time()
 	print('night')
 	cycle.start_night()

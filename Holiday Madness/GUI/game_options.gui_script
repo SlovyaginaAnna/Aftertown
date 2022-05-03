@@ -56,7 +56,13 @@ function update(self, dt)
 		menu_panel_open = false
 		end_day_panel_open = true
 		gui.set_enabled(gui.get_node('end_day_panel'), true)
-		gui.set_text(gui.get_node('end_day_text'), 'Today you earned '..earned..' coins')
+		local text_day = ''
+		if earned >= 0 then 
+			text_day = 'Today you earned '..earned..' coins'
+		else
+			text_day = 'Today you lost '..-earned..' coins'
+		end
+		gui.set_text(gui.get_node('end_day_text'), text_day)
 		h.clearCars()
 		msg.post('/navigator', 'clear_cars')
 	end
@@ -87,7 +93,7 @@ function on_message(self, message_id, message, sender)
 end
 
 function game_over()
-	gui.set_enabled(gui.get_node('end_game_panel'), false)
+	gui.set_enabled(gui.get_node('end_game_panel'), true)
 	menu_panel_open = false
 end
 
@@ -171,6 +177,7 @@ end
 
 function skip_tutorial()
 	tutorial_panel_open = false
+	menu_panel_open = true
 	gui.set_enabled(gui.get_node('tutorial'), false)
 	sound.play("/sound#sound")
 	on_start()
@@ -387,6 +394,8 @@ function set_price()
 end
 
 function open_sign_panel(index, pos)
+	sound.play("/sound#sound")
+	print('open')
 	if panel_count == 4 then
 		panel_count = panel_count + 1
 		msg.post('.', 'change_panel')

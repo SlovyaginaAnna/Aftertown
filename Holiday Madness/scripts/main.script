@@ -75,7 +75,8 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("start") then
 		start_game()
 	elseif message_id == hash('place_sign') then
-		
+	elseif message_id == hash('end') then
+		end_game()
 	end
 end
 
