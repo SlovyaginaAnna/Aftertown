@@ -10,7 +10,7 @@ local signs_num = 13
 local sign_types = {'green_brick', 'red_brick', 'green_straight', 'red_straight', 'green_right', 'red_right', 'green_left', 'red_left',
 'green_not_right', 'red_not_right', 'green_not_left', 'red_not_left', 'traffic_light'} --all signs types
 local quantity = {} --tabel consists of type of the sign, bought number and placed number
-local price = {10, 15, 20, 25, 30, 25, 34, 60, 48, 10, 22, 45, 10}
+local price = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10}
 
 function is_left_turn(from_dir, to_dir)
 	return (from_dir == "up" and to_dir == "left" or from_dir == "left" and to_dir == "down"
