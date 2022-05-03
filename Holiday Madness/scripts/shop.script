@@ -27,7 +27,7 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("visit") then
 		if self.Visitors < max_number and day_cycle.is_day() then 
-			currency.change_money(3)
+			currency.change_money(7)
 			self.Visitors = self.Visitors + 1
 			table.insert(visitors_table, sender)
 			msg.post(sender, "accept")

@@ -3,8 +3,8 @@ local h = require "scripts.home"
 local currency = require "scripts.currency"
 
 local spawning_cars_time = 2
-local max_cars = 10
-go.property("cars_left", 10)
+local max_cars = 5
+go.property("cars_left", 5)
 go.property("number", 0)
 
 function add_car(self)

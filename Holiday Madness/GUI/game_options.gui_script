@@ -87,7 +87,7 @@ function on_message(self, message_id, message, sender)
 end
 
 function game_over()
-	gui.set_enabled(gui.get_node('end_game_panel'), false)
+	gui.set_enabled(gui.get_node('end_game_panel'), true)
 	menu_panel_open = false
 end
 
