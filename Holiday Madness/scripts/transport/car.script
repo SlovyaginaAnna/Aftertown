@@ -125,7 +125,7 @@ function where_next(self, from)
 	elseif not self.InHome then
 		msg.post(navigator, "where_next", { from = from, to = self.Home, color = self.Color, direction = self.direction })
 	else
-		timer.delay(math.random(1.5, 2.5), false, function() where_next(self, c.index(go.get_position("."))) end)
+		timer.delay(math.random(2.0, 2.5), false, function() where_next(self, c.index(go.get_position("."))) end)
 	end
 end
 
@@ -171,9 +171,9 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("speed_up") and not self.is_entering_road then
 		continue_driving(self, message.road, message.from_intersection, message.to_intersection)
 	elseif message_id == hash("wait") then
-		timer.delay(math.random(0.5, 1.5), false, function() where_next(self, c.index(go.get_position("."))) end)
+		timer.delay(math.random(1.5, 2.5), false, function() where_next(self, c.index(go.get_position("."))) end)
 	elseif message_id == hash("wait_on_intersection") then
-		timer.delay(math.random(0.5, 1.5), false, function() msg.post(navigator, "intersection", {road = message.road}) end)
+		timer.delay(math.random(0.9, 1.9), false, function() msg.post(navigator, "intersection", {road = message.road}) end)
 	elseif message_id == hash("enter_intersection") then
 		enter_intersection(self, message.road)
 	elseif message_id == hash("done") then

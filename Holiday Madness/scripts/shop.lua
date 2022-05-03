@@ -23,7 +23,7 @@ function S.create(position, varient)
 		url 	= obj, 
 		color   = varient,
 	}
-	c.setSmth(position, obj)
+	c.setShop(position, obj)
 	table.insert(S.shops, hStruct)
 end
 

@@ -32,6 +32,7 @@ function C.generate(position, tab)
 	local cStruct = {
 		isEmpty = true,
 		hasSign = false,
+		hasShop = false,
 		center 	= position,
 		width = 1,
 		handle = nil,
@@ -97,8 +98,21 @@ function C.isEmptyIndex(index)
 	return empty
 end
 
+function C.isShop(index)
+	index = index - 1
+	indexes = {math.floor(index / C.rows) + 1, index % C.rows + 1}
+	empty = C.coord[indexes[1]][indexes[2]].hasShop
+	return empty
+end
+
 function C.setSmth(position, handle)
 	index = C.colAndRow(position)
+	C.coord[index[1]][index[2]].handle = handle
+end
+
+function C.setShop(position, handle)
+	index = C.colAndRow(position)
+	C.coord[index[1]][index[2]].hasShop = true
 	C.coord[index[1]][index[2]].handle = handle
 end
 

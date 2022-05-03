@@ -122,7 +122,6 @@ function plan_roads(start, finish, sender)
 end
 
 
-
 function remove_road(start, finish)
 	
 	start = c.colAndRowToPos(c.colAndRow(start))
@@ -231,7 +230,7 @@ function get_next_road(start, finish, color, direction)
 				end
 			end
 		end
-		if v == nil or d[vertex(v, v_dir)] == math.huge then
+		if (finish == v) or (finish == nil and c.isShop(v)) or  v == nil or d[vertex(v, v_dir)] == math.huge then
 			break
 		end
 
