@@ -65,12 +65,6 @@ function init(self)
 	build_roads(self)
 end
 
-function update(self, dt)
-	if currency.cash() < 0 then
-		end_game()
-	end
-end
-
 function on_message(self, message_id, message, sender)
 	if message_id == hash("add_road") then
 		draw_road(self, message.road)

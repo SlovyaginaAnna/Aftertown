@@ -82,7 +82,11 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash('end') then
 		game_over()
 	elseif message_id == hash('end_day_panel') then
-		open_end_day_panel()
+		if currency_table.cash() < 0 then
+			game_over()
+		else
+			open_end_day_panel()
+		end
 	end
 end
 
