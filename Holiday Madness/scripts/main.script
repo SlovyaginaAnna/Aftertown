@@ -81,7 +81,8 @@ end
 
 function on_input(self, action_id, action)
 	if action_id == hash("touch") and action.pressed then
-		if true then
+		if false then
+			-- Debug prints.
 			local x = action.x + go.get_position("/camera#camera").x
 			local y = action.y + go.get_position("/camera#camera").y
 			print('{x=' .. string.format("%.2f", x) .. ', y=' .. string.format("%.2f", y) .. ', z=0}')
