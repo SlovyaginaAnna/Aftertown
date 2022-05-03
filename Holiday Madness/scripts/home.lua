@@ -4,9 +4,25 @@ local H ={}
 H.homes	= {}  --таблиа хранящая все дома
 H.count = 0
 local cars_home = 0
+local all_cars = {}
 
-function H.sendCar()
+function H.start()
+	local cars_home = 0
+	for e, home in pairs(H.homes) do
+		msg.post(home.url, 'start')
+	end
+end
+
+function H.sendCar(car)
 	cars_home = cars_home - 1
+	table.insert(all_cars, car)
+end
+
+function H.clearCars()
+	for e, car in pairs(all_cars) do
+		msg.post(car, 'delete')
+	end
+	all_cars = {}
 end
 
 function H.returnCar()

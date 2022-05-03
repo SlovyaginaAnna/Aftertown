@@ -1,4 +1,5 @@
 local cycle = require "scripts.day_cycle"
+local h = require "scripts.home"
 local start = 0
 local start_night_time = 0
 
@@ -28,6 +29,7 @@ function start_day()
 	print('day')
 	start = os.time()
 	cycle.start_day()
+	h.start()
 	msg.post('/GUI#game_options', 'start_day')
 end
 

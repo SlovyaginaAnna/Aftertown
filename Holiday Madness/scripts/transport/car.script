@@ -189,6 +189,8 @@ function on_message(self, message_id, message, sender)
 		in_shop = true
 	elseif message_id == hash("deny") then
 		timer.delay(math.random(0.5, 1.5), false, function() where_next(self, c.index(go.get_position("."))) end)
+	elseif message_id == hash("delete") then
+		go.delete('.')
 	end
 end
 

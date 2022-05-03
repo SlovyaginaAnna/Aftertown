@@ -1,5 +1,7 @@
+local h = require 'scripts.home'
 local signs_table = require "scripts.signs"
 local currency_table = require "scripts.currency"
+
 local color_change_time = 2
 local shop_open = false
 local index_of_open_panel = 0
@@ -55,6 +57,8 @@ function update(self, dt)
 		end_day_panel_open = true
 		gui.set_enabled(gui.get_node('end_day_panel'), true)
 		gui.set_text(gui.get_node('end_day_text'), 'Today you earned '..earned..' coins')
+		h.clearCars()
+		msg.post('/navigator', 'clear_cars')
 	end
 end
 

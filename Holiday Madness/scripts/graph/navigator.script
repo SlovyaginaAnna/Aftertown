@@ -318,6 +318,16 @@ function is_busy_horizontal(index)
 	return count > 0
 end
 
+function clear_cars()
+	for i = 1, cell_count do
+		for e, road in pairs(roads[cells[i - 1]]) do
+			roads[cells[i - 1]][e].cars = 0
+			roads[cells[i - 1]][e].cars_entered = 0
+			cars[cells[i - 1]][e] = {}
+		end
+	end
+end
+
 function set_sign_navigator(type, position, url)
 	c.setSign(position, url)
 end
@@ -391,6 +401,9 @@ function on_message(self, message_id, message, sender)
 		
 	elseif message_id == hash("delete_road") then
 		remove_road(message.from, message.to)
+
+	elseif message_id == hash("clear_cars") then
+		clear_cars()
 		
 	elseif message_id == hash("add_road_url") then
 		roads[message.road.from.number][message.road.to.number].url = message.url

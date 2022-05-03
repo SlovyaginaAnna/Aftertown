@@ -3,6 +3,7 @@ local h = require "scripts.home"
 local currency = require "scripts.currency"
 
 local spawning_cars_time = 2
+local max_cars = 10
 go.property("cars_left", 10)
 go.property("number", 0)
 
@@ -11,7 +12,7 @@ function add_car1(self)
 	position.z = 0.65
 	car = factory.create("main:/cars#factory", position, nil, {Color = 1, Home = c.index(go.get_position("."))}, 1.0)
 	self.cars_left  = self.cars_left - 1
-	h.sendCar()
+	h.sendCar(car)
 	currency.change_money(-1)
 	local navigator = msg.url("main", "/navigator", "")
 	msg.post(car, "start", {from = self.number, to = nil, navigator = navigator})
@@ -21,5 +22,13 @@ function add_car1(self)
 end
 
 function init(self)
-	timer.delay(spawning_cars_time, false, function() add_car1(self) end)
+
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash('start') then
+		self.cars_left = max_cars
+		max_cars = max_cars + 1
+		timer.delay(spawning_cars_time, false, function() add_car1(self) end)
+	end
 end
