@@ -3,6 +3,7 @@ R.roads = {} -- Таблица с координатами дорог.
 
 function R.initRoads()
 	--table.insert(R.roads, {start=, finish=})
+	-- South west.
 	table.insert(R.roads, {start={x=451.80157470703, y=869.49285888672, z=0}, finish={x=451.80157470703, y=713.44604492188, z=0}}) -- 190, 186
 	table.insert(R.roads, {start={x=448.04177856445, y=713.44604492188, z=0}, finish={x=602.19323730469, y=710.94927978516, z=0}}) -- 243
 	table.insert(R.roads, {start={x=600.93994140625, y=712.19763183594, z=0}, finish={x=600.93994140625, y=566.13781738281, z=0}}) -- 240
@@ -20,6 +21,8 @@ function R.initRoads()
 	table.insert(R.roads, {start={x=711.22717285156, y=29.336853027344, z=0}, finish={x=709.97387695313, y=229.07678222656, z=0}}) -- 271
 	table.insert(R.roads, {start={x=709.97387695313, y=229.07678222656, z=0}, finish={x=604.69976806641, y=236.56701660156, z=0}}) -- 233
 	table.insert(R.roads, {start={x=603.44647216797, y=234.07025146484, z=0}, finish={x=602.19323730469, y=406.34594726563, z=0}}) -- 233 237
+	-- North west.
+	--table.insert(R.roads, {start=, finish=})
 end
 
 return R

@@ -111,6 +111,9 @@ function plan_roads(start, finish, sender)
 	
 	local first_cell = {number = c.index(start), position = start}
 	local last_cell = {number = c.index(finish), position = finish}
+
+	add_cell(c.index(start))
+	add_cell(c.index(finish))
 	
 	if can_add_road(first_cell, last_cell) then
 		local built_road = add_road(first_cell, last_cell)
@@ -144,11 +147,19 @@ end
 -- Adds cell.
 
 function add_cell(cell)
-	roads[cell] = {}
-	cars[cell] = {}
-	signs[cell] = {}
-	cells[cell_count] = cell
-	cell_count = cell_count + 1
+	local exists = false
+	for e, c in pairs(cells) do
+		if c == cell then
+			exists = true
+		end
+	end
+	if not exists then
+		roads[cell] = {}
+		cars[cell] = {}
+		signs[cell] = {}
+		cells[cell_count] = cell
+		cell_count = cell_count + 1
+	end
 end
 
 -- Increment cars counter on the road.

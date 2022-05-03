@@ -20,8 +20,6 @@ function C.initCoord()
 		end
 		table.insert(C.coord, tab)
 	end
-	C.setEnableCells()
-	C.setWidths()
 end
 
 -- Get position by coords with column and row.
@@ -40,14 +38,6 @@ function C.generate(position, tab)
 	}
 	table.insert(tab, cStruct)
 	table.insert(C.road_built, false)
-end
-
-function C.setWidths()
-	-- TODO - remove.
-end
-
-function C.setEnableCells()
-	-- TODO: remove this option entirely.
 end
 
 function C.setWidth(first, second, i, j, width)

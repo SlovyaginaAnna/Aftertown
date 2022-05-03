@@ -46,24 +46,11 @@ function build_roads(self)
 end
 
 function add_cells_to_navigator(self)
-	msg.post("/navigator", "add_cell", {cell = 190})
-	msg.post("/navigator", "add_cell", {cell = 186})
-	msg.post("/navigator", "add_cell", {cell = 243})
-	msg.post("/navigator", "add_cell", {cell = 240})
-	msg.post("/navigator", "add_cell", {cell = 297})
-	msg.post("/navigator", "add_cell", {cell = 354})
-	msg.post("/navigator", "add_cell", {cell = 183})
-	msg.post("/navigator", "add_cell", {cell = 126})
-	msg.post("/navigator", "add_cell", {cell = 237})
-	msg.post("/navigator", "add_cell", {cell = 9})
-	msg.post("/navigator", "add_cell", {cell = 1})
-	msg.post("/navigator", "add_cell", {cell = 191})
-	msg.post("/navigator", "add_cell", {cell = 197})
-	msg.post("/navigator", "add_cell", {cell = 64})
-	msg.post("/navigator", "add_cell", {cell = 267})
-	msg.post("/navigator", "add_cell", {cell = 271})
-	msg.post("/navigator", "add_cell", {cell = 233})
-	msg.post("/navigator", "add_cell", {cell = 237})
+	local cells_numbers = {190, 186, 243, 240, 297, 354, 183, 126, 237, 9, 1, 191, 197, 64, 267,
+							271, 233, 237}
+	for e, cell in pairs(cells_numbers) do
+		msg.post("/navigator", "add_cell", {cell = cell})
+	end
 end
 
 function init(self)
@@ -74,7 +61,6 @@ function init(self)
 	s.initShops()
 	h.initHomes()
 	-- Init navigator.
-	add_cells_to_navigator(self)
 	build_roads(self)
 end
 
@@ -95,9 +81,17 @@ end
 
 function on_input(self, action_id, action)
 	if action_id == hash("touch") and action.pressed then
-		local tile_index = sign_table.tile_index(action)
-		if tile_index ~= 0 then
-			msg.post('/GUI#game_options', 'signs_panel', {index = tile_index, pos = vmath.vector3(action.x, action.y, 1)})
+		if false then
+			local x = action.x + go.get_position("/camera#camera").x
+			local y = action.y + go.get_position("/camera#camera").y
+			print('{x=' .. string.format("%.2f", x) .. ', y=' .. string.format("%.2f", y) .. ', z=0}')
+			print(c.index(vmath.vector3(x, y, 0)))
+			print('')
+		else
+			local tile_index = sign_table.tile_index(action)
+			if tile_index ~= 0 then
+				msg.post('/GUI#game_options', 'signs_panel', {index = tile_index, pos = vmath.vector3(action.x, action.y, 1)})
+			end
 		end
 	end
 end
