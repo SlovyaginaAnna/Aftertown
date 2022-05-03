@@ -1,5 +1,5 @@
 local C = {}
-local currency = 56
+local currency = 100
 
 function C.cash()
 	return currency

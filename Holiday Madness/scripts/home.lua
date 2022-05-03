@@ -51,6 +51,7 @@ function H.addHome()
 	H.create(vmath.vector3(465.5, 568.6, 0), 1)
 	H.create(vmath.vector3(488.85, 1463.85, 0), 1)
 	H.create(vmath.vector3(1191.84, 566.14, 0), 1)
+	H.create(vmath.vector3(2183.30, 388.54, 0), 1)
 	
 end
 
