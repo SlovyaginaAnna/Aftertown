@@ -41,9 +41,17 @@ end
 function H.addHome()
 	H.create(vmath.vector3(730.0, 567.3, 0), 0)
 	H.create(vmath.vector3(295.1, 568.6, 0), 0)
+	H.create(vmath.vector3(487.45, 1174.64, 0), 0)
+	H.create(vmath.vector3(712.73, 982.59, 0), 0)
+	H.create(vmath.vector3(1035.10, 567.45, 0), 0)
+	H.create(vmath.vector3(1929.80, 279.45, 0), 0)
+	H.create(vmath.vector3(2168.16, 166.36, 0), 0)
 	
 	H.create(vmath.vector3(871.6, 569.8, 0), 1)
 	H.create(vmath.vector3(465.5, 568.6, 0), 1)
+	H.create(vmath.vector3(488.85, 1463.85, 0), 1)
+	H.create(vmath.vector3(1191.84, 566.14, 0), 1)
+	
 end
 
 function H.create(position, varient)

@@ -4,25 +4,89 @@ R.roads = {} -- Таблица с координатами дорог.
 function R.initRoads()
 	--table.insert(R.roads, {start=, finish=})
 	-- South west.
-	table.insert(R.roads, {start={x=451.80157470703, y=869.49285888672, z=0}, finish={x=451.80157470703, y=713.44604492188, z=0}}) -- 190, 186
-	table.insert(R.roads, {start={x=448.04177856445, y=713.44604492188, z=0}, finish={x=602.19323730469, y=710.94927978516, z=0}}) -- 243
-	table.insert(R.roads, {start={x=600.93994140625, y=712.19763183594, z=0}, finish={x=600.93994140625, y=566.13781738281, z=0}}) -- 240
-	table.insert(R.roads, {start={x=599.68670654297, y=566.13781738281, z=0}, finish={x=730.02612304688, y=567.38623046875, z=0}}) -- 297
-	table.insert(R.roads, {start={x=723.759765625, y=566.13781738281, z=0}, finish={x=871.64489746094, y=569.88299560547, z=0}}) -- 354
-	table.insert(R.roads, {start={x=599.68670654297, y=566.13781738281, z=0}, finish={x=465.58746337891, y=568.63464355469, z=0}}) -- 240 183
-	table.insert(R.roads, {start={x=454.30810546875, y=567.38623046875, z=0}, finish={x=295.14361572266, y=568.63464355469, z=0}}) -- 126
-	table.insert(R.roads, {start={x=599.68670654297, y=562.39270019531, z=0}, finish={x=600.93994140625, y=403.84918212891, z=0}}) -- 240 237
-	table.insert(R.roads, {start={x=599.68670654297, y=407.59429931641, z=0}, finish={x=26.945169448853, y=407.59429931641, z=0}}) -- 9
-	table.insert(R.roads, {start={x=24.438642501831, y=407.59429931641, z=0}, finish={x=26.945169448853, y=31.833557128906, z=0}}) -- 1
-	table.insert(R.roads, {start={x=29.451696395874, y=26.840087890625, z=0}, finish={x=488.1462097168, y=26.840087890625, z=0}}) -- 191
-	table.insert(R.roads, {start={x=488.1462097168, y=28.088439941406, z=0}, finish={x=488.1462097168, y=291.49548339844, z=0}}) -- 197
-	table.insert(R.roads, {start={x=485.63967895508, y=292.74383544922, z=0}, finish={x=148.51174926758, y=297.73736572266, z=0}}) -- 64
-	table.insert(R.roads, {start={x=490.65274047852, y=26.840087890625, z=0}, finish={x=711.22717285156, y=28.088439941406, z=0}}) -- 191 267
-	table.insert(R.roads, {start={x=711.22717285156, y=29.336853027344, z=0}, finish={x=709.97387695313, y=229.07678222656, z=0}}) -- 271
-	table.insert(R.roads, {start={x=709.97387695313, y=229.07678222656, z=0}, finish={x=604.69976806641, y=236.56701660156, z=0}}) -- 233
-	table.insert(R.roads, {start={x=603.44647216797, y=234.07025146484, z=0}, finish={x=602.19323730469, y=406.34594726563, z=0}}) -- 233 237
+	table.insert(R.roads, {start={x=451.80157470703, y=869.49285888672, z=0}, finish={x=451.80157470703, y=713.44604492188, z=0}})
+	table.insert(R.roads, {start={x=448.04177856445, y=713.44604492188, z=0}, finish={x=602.19323730469, y=710.94927978516, z=0}})
+	table.insert(R.roads, {start={x=600.93994140625, y=712.19763183594, z=0}, finish={x=600.93994140625, y=566.13781738281, z=0}})
+	table.insert(R.roads, {start={x=599.68670654297, y=566.13781738281, z=0}, finish={x=730.02612304688, y=567.38623046875, z=0}})
+	table.insert(R.roads, {start={x=723.759765625, y=566.13781738281, z=0}, finish={x=871.64489746094, y=569.88299560547, z=0}})
+	table.insert(R.roads, {start={x=599.68670654297, y=566.13781738281, z=0}, finish={x=465.58746337891, y=568.63464355469, z=0}})
+	table.insert(R.roads, {start={x=454.30810546875, y=567.38623046875, z=0}, finish={x=295.14361572266, y=568.63464355469, z=0}})
+	table.insert(R.roads, {start={x=599.68670654297, y=562.39270019531, z=0}, finish={x=600.93994140625, y=403.84918212891, z=0}})
+	table.insert(R.roads, {start={x=599.68670654297, y=407.59429931641, z=0}, finish={x=26.945169448853, y=407.59429931641, z=0}})
+	table.insert(R.roads, {start={x=24.438642501831, y=407.59429931641, z=0}, finish={x=26.945169448853, y=31.833557128906, z=0}})
+	table.insert(R.roads, {start={x=29.451696395874, y=26.840087890625, z=0}, finish={x=488.1462097168, y=26.840087890625, z=0}})
+	table.insert(R.roads, {start={x=488.1462097168, y=28.088439941406, z=0}, finish={x=488.1462097168, y=291.49548339844, z=0}})
+	table.insert(R.roads, {start={x=485.63967895508, y=292.74383544922, z=0}, finish={x=148.51174926758, y=297.73736572266, z=0}})
+	table.insert(R.roads, {start={x=490.65274047852, y=26.840087890625, z=0}, finish={x=711.22717285156, y=28.088439941406, z=0}})
+	table.insert(R.roads, {start={x=711.22717285156, y=29.336853027344, z=0}, finish={x=709.97387695313, y=229.07678222656, z=0}})
+	table.insert(R.roads, {start={x=709.97387695313, y=229.07678222656, z=0}, finish={x=604.69976806641, y=236.56701660156, z=0}})
+	table.insert(R.roads, {start={x=603.44647216797, y=234.07025146484, z=0}, finish={x=602.19323730469, y=406.34594726563, z=0}})
 	-- North west.
-	--table.insert(R.roads, {start=, finish=})
+	table.insert(R.roads, {start={x=601.71, y=709.75, z=0}, finish={x=601.71, y=1059.97, z=0}})
+	table.insert(R.roads, {start={x=602.95, y=1060.39, z=0}, finish={x=601.71, y=1174.64, z=0}})
+	table.insert(R.roads, {start={x=601.71, y=1174.64, z=0}, finish={x=487.45, y=1174.64, z=0}})
+	table.insert(R.roads, {start={x=601.42, y=1173.83, z=0}, finish={x=601.42, y=1462.59, z=0}})
+	table.insert(R.roads, {start={x=600.16, y=1460.05, z=0}, finish={x=488.85, y=1463.85, z=0}})
+	table.insert(R.roads, {start={x=601.42, y=1061.11, z=0}, finish={x=822.77, y=1059.84, z=0}})
+	table.insert(R.roads, {start={x=824.03, y=1059.84, z=0}, finish={x=825.30, y=981.32, z=0}})
+	table.insert(R.roads, {start={x=825.30, y=982.59, z=0}, finish={x=712.73, y=980.05, z=0}})
+	table.insert(R.roads, {start={x=824.03, y=977.52, z=0}, finish={x=825.30, y=707.76, z=0}})
+	table.insert(R.roads, {start={x=824.03, y=711.56, z=0}, finish={x=711.46, y=707.76, z=0}})
+	table.insert(R.roads, {start={x=711.46, y=706.49, z=0}, finish={x=733.76, y=565.06, z=0}})
+	table.insert(R.roads, {start={x=723.38, y=568.18, z=0}, finish={x=711.09, y=706.03, z=0}})
+	table.insert(R.roads, {start={x=711.09, y=706.03, z=0}, finish={x=599.23, y=708.51, z=0}})
+	-- North east.
+	table.insert(R.roads, {start={x=601.83, y=1460.97, z=0}, finish={x=1032.69, y=1457.20, z=0}})
+	table.insert(R.roads, {start={x=1032.69, y=1459.71, z=0}, finish={x=1033.95, y=1333.89, z=0}})
+	table.insert(R.roads, {start={x=1033.95, y=1332.63, z=0}, finish={x=1032.69, y=982.86, z=0}})
+	table.insert(R.roads, {start={x=1031.43, y=980.34, z=0}, finish={x=827.34, y=980.34, z=0}})
+	table.insert(R.roads, {start={x=1032.69, y=980.34, z=0}, finish={x=1032.69, y=709.83, z=0}})
+	table.insert(R.roads, {start={x=1032.69, y=709.83, z=0}, finish={x=823.56, y=708.57, z=0}})
+	table.insert(R.roads, {start={x=1033.95, y=1335.15, z=0}, finish={x=1720.57, y=1331.38, z=0}})
+	table.insert(R.roads, {start={x=1720.57, y=1331.38, z=0}, finish={x=1721.83, y=1460.97, z=0}})
+	table.insert(R.roads, {start={x=1724.35, y=1459.71, z=0}, finish={x=1720.57, y=1554.08, z=0}})
+	table.insert(R.roads, {start={x=1507.65, y=1560.37, z=0}, finish={x=1719.31, y=1554.08, z=0}})
+	table.insert(R.roads, {start={x=1722.78, y=1458.63, z=0}, finish={x=2182.53, y=1458.63, z=0}})
+	table.insert(R.roads, {start={x=2181.22, y=1457.32, z=0}, finish={x=2181.22, y=1125.92, z=0}})
+	table.insert(R.roads, {start={x=2185.14, y=1124.60, z=0}, finish={x=2044.08, y=1128.55, z=0}})
+	table.insert(R.roads, {start={x=2041.47, y=1129.86, z=0}, finish={x=2038.86, y=1267.95, z=0}})
+	table.insert(R.roads, {start={x=2038.86, y=1267.95, z=0}, finish={x=1724.08, y=1267.95, z=0}})
+	table.insert(R.roads, {start={x=2037.55, y=1265.32, z=0}, finish={x=1725.39, y=1267.95, z=0}})
+	table.insert(R.roads, {start={x=2182.53, y=1124.60, z=0}, finish={x=2182.53, y=710.36, z=0}})
+	table.insert(R.roads, {start={x=2182.53, y=710.36, z=0}, finish={x=1927.84, y=710.36, z=0}})
+	table.insert(R.roads, {start={x=1923.92, y=710.36, z=0}, finish={x=1926.53, y=818.19, z=0}})
+	table.insert(R.roads, {start={x=1927.84, y=822.14, z=0}, finish={x=1852.08, y=823.45, z=0}})
+	table.insert(R.roads, {start={x=1849.47, y=824.77, z=0}, finish={x=1849.47, y=918.14, z=0}})
+	table.insert(R.roads, {start={x=1849.47, y=824.77, z=0}, finish={x=1724.08, y=823.45, z=0}})
+	table.insert(R.roads, {start={x=2183.84, y=1121.97, z=0}, finish={x=2307.92, y=1123.29, z=0}})
+	table.insert(R.roads, {start={x=2307.92, y=1121.10, z=0}, finish={x=2311.84, y=388.60, z=0}})
+	-- South center.
+	table.insert(R.roads, {start={x=604.08, y=403.07, z=0}, finish={x=1305.47, y=405.70, z=0}})
+	table.insert(R.roads, {start={x=716.41, y=226.85, z=0}, finish={x=1301.55, y=230.79, z=0}})
+	table.insert(R.roads, {start={x=1302.86, y=232.11, z=0}, finish={x=1301.55, y=404.38, z=0}})
+	table.insert(R.roads, {start={x=1302.86, y=404.38, z=0}, finish={x=1302.86, y=566.14, z=0}})
+	table.insert(R.roads, {start={x=1304.16, y=566.14, z=0}, finish={x=1191.84, y=566.14, z=0}})
+	table.insert(R.roads, {start={x=1193.14, y=568.77, z=0}, finish={x=1035.10, y=567.45, z=0}})
+	table.insert(R.roads, {start={x=1033.80, y=567.45, z=0}, finish={x=1032.49, y=710.79, z=0}})
+	table.insert(R.roads, {start={x=1032.49, y=709.48, z=0}, finish={x=827.43, y=706.85, z=0}})
+	table.insert(R.roads, {start={x=1035.10, y=710.79, z=0}, finish={x=1306.78, y=708.16, z=0}})
+	table.insert(R.roads, {start={x=1306.78, y=706.85, z=0}, finish={x=1925.88, y=709.48, z=0}})
+	table.insert(R.roads, {start={x=1928.49, y=711.67, z=0}, finish={x=1927.18, y=570.96, z=0}})
+	table.insert(R.roads, {start={x=1925.88, y=568.33, z=0}, finish={x=1833.14, y=561.75, z=0}})
+	table.insert(R.roads, {start={x=1831.84, y=561.75, z=0}, finish={x=1577.14, y=564.38, z=0}})
+	table.insert(R.roads, {start={x=1578.45, y=563.07, z=0}, finish={x=1574.53, y=403.95, z=0}})
+	table.insert(R.roads, {start={x=1574.53, y=402.63, z=0}, finish={x=1578.45, y=229.04, z=0}})
+	table.insert(R.roads, {start={x=1579.76, y=229.48, z=0}, finish={x=1305.47, y=228.16, z=0}})
+	table.insert(R.roads, {start={x=1834.45, y=276.82, z=0}, finish={x=1929.80, y=279.45, z=0}})
+	table.insert(R.roads, {start={x=1834.45, y=274.19, z=0}, finish={x=1833.14, y=391.23, z=0}})
+	table.insert(R.roads, {start={x=1833.14, y=389.92, z=0}, finish={x=2183.18, y=388.60, z=0}})
+	table.insert(R.roads, {start={x=2181.22, y=388.60, z=0}, finish={x=2182.53, y=709.48, z=0}})
+	table.insert(R.roads, {start={x=2168.16, y=166.36, z=0}, finish={x=2307.92, y=170.30, z=0}})
+	table.insert(R.roads, {start={x=2306.61, y=167.67, z=0}, finish={x=2307.92, y=387.29, z=0}})
+	table.insert(R.roads, {start={x=2309.22, y=389.92, z=0}, finish={x=2309.22, y=1123.73, z=0}})
+	table.insert(R.roads, {start={x=2177.31, y=393.86, z=0}, finish={x=2178.61, y=709.48, z=0}})
+	table.insert(R.roads, {start={x=1308.66, y=403.19, z=0}, finish={x=1576.20, y=404.62, z=0}})
+	table.insert(R.roads, {start={x=1836.59, y=387.52, z=0}, finish={x=1833.72, y=564.14, z=0}})
 end
 
 return R

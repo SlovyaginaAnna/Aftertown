@@ -4,8 +4,8 @@ C.coord	= {}  --таблица, хранящая все клетки
 C.road_built = {} --таблица, хранящая, построена ли на этой клетке дорога (для того, чтобы
 -- к одному дому подходила только одна дорога)
 C.coordinates_for_signs = {}
-C.rows = 19
-C.columns = 20
+C.rows = 34
+C.columns = 50
 C.cell = 48
 
 function C.initCoord()

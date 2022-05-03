@@ -4,12 +4,11 @@ S.shops	= {}  --таблиа хранящая все магазины
 S.count = 0
 
 function S.initShops()
-	local orange = {{28/5, 58/5}}
-	local red = {{10/5, 19/5}}
-	for i = 1, 1 do
-		S.create(vmath.vector3(146, 309, 0), 0)
-		S.create(vmath.vector3(450.5, 872, 0), 1)
-	end
+	S.create(vmath.vector3(146, 309, 0), 0)
+	S.create(vmath.vector3(1849.47, 918.14, 0), 0)
+	S.create(vmath.vector3(450.5, 872, 0), 1)
+	S.create(vmath.vector3(1511.43, 1549.04, 0), 1)
+	
 end
 
 function S.create(position, varient)
