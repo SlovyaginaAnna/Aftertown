@@ -10,7 +10,7 @@ go.property("number", 0)
 function add_car1(self)
 	position = go.get_position(".")
 	position.z = 0.65
-	car = factory.create("main:/cars#factory", position, nil, {Color = 1, Home = c.index(go.get_position("."))}, 1.0)
+	car = factory.create("main:/cars#factory", position, nil, {Color = 1, Home = c.index(go.get_position("."))}, 0.65)
 	self.cars_left  = self.cars_left - 1
 	h.sendCar(car)
 	currency.change_money(-1)
