@@ -5,6 +5,7 @@ local c = require "scripts.coordinates"
 local s = require "scripts.shop"
 local sgn = require "scripts.signs"
 local day_cycle = require "scripts.day_cycle"
+local h = require "scripts.graph.heap"
 
 -- Graph
 
@@ -202,6 +203,10 @@ function get_road_direction(road)
 	end
 end
 
+comparator = function(a, b)
+	return a.dist < b.dist
+end
+
 -- Plot route and return first road of it.
 function get_next_road(start, finish, color, direction)
 	directions = {"up", "left", "down", "right"}
@@ -217,38 +222,40 @@ function get_next_road(start, finish, color, direction)
 		end
 	end
 	d[vertex(start, direction)] = 0
+	local heap = h.new(comparator)
+	heap:Insert({dist = d[vertex(start, direction)], v = start, dir = direction})
 	for i = 1, cell_count * 4 do
 		v = nil
 		v_dir = nil
-		for ind = 1, cell_count do
-			for e, dir in pairs(directions) do
-				local j = cells[ind - 1]
-				-- Find closest cell, can be optimized.
-				if not(used[vertex(j, dir)]) and (v == nil or d[vertex(j, dir)] < d[vertex(v, v_dir)]) then
-					v = j
-					v_dir = dir
-				end
+		if heap:Size() > 0 then
+			min_vertex = heap:Pop()
+			v = min_vertex.v
+			v_dir = min_vertex.dir
+		end
+		if (not (v == nil)) and (not used[vertex(v, v_dir)]) then
+		
+			if (finish == v) or (finish == nil and c.isShop(v)) or  v == nil or d[vertex(v, v_dir)] == math.huge then
+				break
 			end
-		end
-		if (finish == v) or (finish == nil and c.isShop(v)) or  v == nil or d[vertex(v, v_dir)] == math.huge then
-			break
-		end
 
-		used[vertex(v, v_dir)] = true
-		-- Check roads.
-		for e, road in pairs(roads[v]) do
-			local sign = c.getSign(road.to.position)
-			local from_sign = c.getSign(road.from.position)
-			local url = msg.url(nil, sign, 'road_sign')
-			local from_url = msg.url(nil, from_sign, 'road_sign')
-			dir = get_road_direction(road)
-			if (sign == nil or not (go.get(url, "Type") == 1 and color == 1 or go.get(url, "Type") == 2 and color == 0))
-			and (from_sign == nil or sgn.can_turn(v_dir, dir, go.get(from_url, "Type"), color)) then
-				if d[vertex(v, v_dir)] + time_on_road(road) < d[vertex(e, dir)] then
-					d[vertex(e, dir)] = d[vertex(v, v_dir)] + time_on_road(road)
-					p[vertex(e, dir)] = {v = v, dir = v_dir}
+			used[vertex(v, v_dir)] = true
+			-- Check roads.
+			for e, road in pairs(roads[v]) do
+				local sign = c.getSign(road.to.position)
+				local from_sign = c.getSign(road.from.position)
+				local url = msg.url(nil, sign, 'road_sign')
+				local from_url = msg.url(nil, from_sign, 'road_sign')
+				dir = get_road_direction(road)
+				if (sign == nil or not (go.get(url, "Type") == 1 and color == 1 or go.get(url, "Type") == 2 and color == 0))
+				and (from_sign == nil or sgn.can_turn(v_dir, dir, go.get(from_url, "Type"), color)) then
+					if d[vertex(v, v_dir)] + time_on_road(road) < d[vertex(e, dir)] then
+						d[vertex(e, dir)] = d[vertex(v, v_dir)] + time_on_road(road)
+						heap:Insert({dist = vertex(e, dir), v = e, dir = dir})
+						p[vertex(e, dir)] = {v = v, dir = v_dir}
+					end
 				end
 			end
+			
 		end
 	end
 	return get_next_road_restore_path(start, finish, color, p, d)

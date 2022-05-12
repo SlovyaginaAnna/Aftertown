@@ -75,6 +75,7 @@ function C.enableCells(first, second, i, j)
 end
 
 function C.isBlocked(indexes)
+	--TODO - remove.
 	if indexes[1] > C.columns or indexes[2] > C.rows then
 		return true
 	else
@@ -142,8 +143,6 @@ function C.index(position)
 	r =  (position.y - position.y % C.cell + C.cell) / C.cell
 	return (col - 1) * C.rows + r % (C.rows + 1)
 end
-
-
 
 function C.colAndRow(position)
 	col = (position.x - position.x % C.cell + C.cell) / C.cell

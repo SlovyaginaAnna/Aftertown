@@ -21,10 +21,6 @@ function add_car(self)
 	end
 end
 
-function init(self)
-	
-end
-
 function on_message(self, message_id, message, sender)
 	if message_id == hash('start') then
 		self.cars_left = max_cars
